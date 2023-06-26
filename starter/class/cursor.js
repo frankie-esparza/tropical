@@ -1,7 +1,6 @@
 const Screen = require("./screen");
 
 class Cursor {
-
   constructor(numRows, numCols) {
     this.numRows = numRows;
     this.numCols = numCols;
@@ -10,8 +9,10 @@ class Cursor {
     this.col = 0;
 
     this.gridColor = 'black';
-    this.cursorColor = 'yellow';
+    this.cursorColor = 'magenta';
 
+    this.setBackgroundColor(this.row, this.col, this.cursorColor);
+    Screen.render();
   }
 
   resetBackgroundColor() {
@@ -20,25 +21,64 @@ class Cursor {
 
   setBackgroundColor() {
     Screen.setBackgroundColor(this.row, this.col, this.cursorColor);
+    Screen.render();
+    Screen.printCommands();
   }
 
+  logCursorErrorMessage = () => {
+    console.log("The cursor can't move that way, try another direction.");
+  }
+
+  // TODO - figure out how to use a helper function like move below (still buggy)
+  // to reduce code in up, down, left, right
+  //
+  // move = (rowOrCol, increment) => {
+  //   this.resetBackgroundColor();
+  //   rowOrCol += increment;
+  //   this.setBackgroundColor();
+  // }
+
+  // LONG WAY
   up() {
-    // Move cursor up
+    if (this.row > 0) {
+      this.resetBackgroundColor();
+      this.row--;
+      this.setBackgroundColor();
+
+    } else {
+      this.logCursorErrorMessage();
+    }
   }
 
   down() {
-    // Move cursor down
+    if (this.row < this.numRows - 1) {
+      this.resetBackgroundColor();
+      this.row++;
+      this.setBackgroundColor();
+    } else {
+      this.logCursorErrorMessage();
+    }
   }
 
   left() {
-    // Move cursor left
+    if (this.col > 0) {
+      this.resetBackgroundColor();
+      this.col--;
+      this.setBackgroundColor();
+    } else {
+      this.logCursorErrorMessage();
+    }
   }
 
   right() {
-    // Move cursor right
+    if (this.col < this.numCols - 1) {
+      this.resetBackgroundColor();
+      this.col++;
+      this.setBackgroundColor();
+    } else {
+      this.logCursorErrorMessage();
+    }
   }
-
 }
-
 
 module.exports = Cursor;
