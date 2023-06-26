@@ -81,27 +81,18 @@ class Bejeweled {
     return matches;
   }
 
-
-
-  // **************************
-  // HELPER METHODS - INSTANCE
-  // **************************
-  getGemAbove(gem) {
-    let row = gem.row;
-    let col = gem.col;
-    return this.grid[row - 1][col];
-  }
-
-  changeGemType(gem, gemType) {
-    this.grid[gem.row][gem.col].type = gemType;
-  }
-
   swapGems() {
     let gem1 = this.selectedGems[0];
     let gem2 = this.selectedGems[1];
 
+    Screen.setGrid(gem1.row, gem1.col, gem2.type);
+    Screen.setGrid(gem2.row, gem2.col, gem1.type);
+    Screen.render();
+
     this.grid[gem1.row][gem1.col].type = gem2.type;
     this.grid[gem2.row][gem2.col].type = gem1.type;
+
+    this.selectedGems = [];
   }
 
   selectGem() {
@@ -115,12 +106,24 @@ class Bejeweled {
       this.swapGems();
     }
 
-    console.log('SELECTED GEMS', this.selectedGems);
   }
 
+  // **************************
+  // HELPER METHODS - INSTANCE
+  // **************************
   updateScore(match) {
     let numGemsMatched = match.length;
     this.score += numGemsMatched;
+  }
+
+  getGemAbove(gem) {
+    let row = gem.row;
+    let col = gem.col;
+    return this.grid[row - 1][col];
+  }
+
+  changeGemType(gem, gemType) {
+    this.grid[gem.row][gem.col].type = gemType;
   }
 
   getRowsAndCols() {
