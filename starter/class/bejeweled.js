@@ -39,7 +39,7 @@ class Bejeweled {
     let matches = [];
 
     rowsAndCols.forEach(rowOrCol => {
-      let matchesInArray = Bejeweled.findMatchesInArray();
+      let matchesInArray = Bejeweled.findMatchesInArray(rowOrCol);
 
       matchesInArray.forEach(match => {
         matches.push(match);
@@ -158,15 +158,3 @@ class Bejeweled {
 }
 
 module.exports = Bejeweled;
-
-// bj = new Bejeweled();
-// bj.grid = grid;
-// Bejeweled.boardSize = 6;
-let match1 = [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }];
-let match3 = [{ row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }];
-let rowWith2Matches = [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' },
-{ row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }];
-let matches3 = [match1, match3];
-
-console.log('MATCHES', Bejeweled.findMatchesInArray(rowWith2Matches));
-console.log('EXPECTED', matches3);
