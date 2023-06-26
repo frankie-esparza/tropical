@@ -131,21 +131,34 @@ describe('Bejeweled', function () {
     });
   });
 
-  describe('selectGem(gem)', function () {
+  describe('selectGem()', function () {
     it('selects a gem when 0 gems have been selected previously', function () {
-      bj.selectGem(gem1);
+      bj.cursor.row = gem1.row;
+      bj.cursor.col = gem1.col;
+
+      bj.selectGem();
       expect(bj.selectedGems.length).to.equal(1);
     });
 
     it('selects a gem when 1 gem has been selected previously', function () {
       bj.selectedGems = [gem1];
-      bj.selectGem(gem2);
+
+      bj.cursor.row = gem2.row;
+      bj.cursor.col = gem2.col;
+
+      bj.selectGem();
       expect(bj.selectedGems.length).to.equal(2);
     });
 
     it('does not select a gem when 2 gems have been selected previously', function () {
       bj.selectedGems = [gem1, gem2];
-      bj.selectGem(gem3);
+
+      bj.cursor.row = gem3.row;
+      bj.cursor.col = gem3.col;
+
+
+      bj.selectGem();
+
       expect(bj.selectedGems.length).to.equal(2);
     });
   });
