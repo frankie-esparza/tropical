@@ -18,7 +18,7 @@ class Bejeweled {
     Screen.initialize(Bejeweled.boardSize, Bejeweled.boardSize);
     Screen.setGridlines(false);
 
-    Bejeweled.fillBoardWithGems.call(this);
+    Bejeweled.initializeBoard.call(this);
     Screen.render();
 
     this.addDirectionCommand('up', this.cursor.up);
@@ -51,6 +51,97 @@ class Bejeweled {
     return matches;
   }
 
+  clearMatches() {
+    let matches = this.findMatches();
+
+    matches.forEach(match => {
+      match.forEach(el => {
+        if (el.row === 0) {
+          el.type = Bejeweled.getRandomGemType();
+        } else {
+          el.type = this.getGemTypeAbove(el);
+        }
+      });
+    });
+
+    Screen.render();
+  }
+
+  swapGems() {
+    let gem1 = this.selectedGems[0];
+    let gem2 = this.selectedGems[1];
+
+    Screen.setGrid(gem1.row, gem1.col, gem2.type);
+    Screen.setGrid(gem2.row, gem2.col, gem1.type);
+    Screen.render();
+
+    this.grid[gem1.row][gem1.col].type = gem2.type;
+    this.grid[gem2.row][gem2.col].type = gem1.type;
+
+    this.selectedGems = [];
+  }
+
+  selectGem() {
+    let gem = this.grid[this.cursor.row][this.cursor.col];
+
+    if (this.selectedGems.length < 2) {
+      this.selectedGems.push(gem);
+    }
+
+    if (this.selectedGems.length === 2) {
+      this.swapGems();
+    }
+  }
+
+  static initializeBoard() {
+    for (let r = 0; r < Bejeweled.boardSize; r++) {
+      let rowOfGems = [];
+
+      for (let c = 0; c < Bejeweled.boardSize; c++) {
+        let gemType = Bejeweled.getRandomGemType();
+        rowOfGems.push({ row: r, col: c, type: gemType });
+        Screen.setGrid(r, c, gemType);
+      }
+      this.grid.push(rowOfGems);
+    }
+    Screen.render();
+  }
+
+  // **************************
+  // HELPER METHODS - INSTANCE
+  // **************************
+  updateScore(match) {
+    let numGemsMatched = match.length;
+    this.score += numGemsMatched;
+  }
+
+  getGemTypeAbove(gem) {
+    let row = gem.row;
+    let col = gem.col;
+    return this.grid[row - 1][col].type;
+  }
+
+  changeGemType(gem, gemType) {
+    this.grid[gem.row][gem.col].type = gemType;
+  }
+
+  getRowsAndCols() {
+    let rows = this.grid;
+    let cols = [];
+
+    for (let col = 0; col < Bejeweled.boardSize; col++) {
+      let column = [];
+      rows.forEach(row => column.push(row[col]));
+      cols.push(column);
+    }
+
+    let rowsAndCols = [...rows, ...cols];
+    return rowsAndCols;
+  }
+
+  // **************************
+  // HELPER METHODS - STATIC
+  // **************************
   static findMatchesInArray(array) {
     let matchType = array[0].type;
     let matches = [];
@@ -81,68 +172,6 @@ class Bejeweled {
     return matches;
   }
 
-  swapGems() {
-    let gem1 = this.selectedGems[0];
-    let gem2 = this.selectedGems[1];
-
-    Screen.setGrid(gem1.row, gem1.col, gem2.type);
-    Screen.setGrid(gem2.row, gem2.col, gem1.type);
-    Screen.render();
-
-    this.grid[gem1.row][gem1.col].type = gem2.type;
-    this.grid[gem2.row][gem2.col].type = gem1.type;
-
-    this.selectedGems = [];
-  }
-
-  selectGem() {
-    let gem = this.grid[this.cursor.row][this.cursor.col];
-
-    if (this.selectedGems.length < 2) {
-      this.selectedGems.push(gem);
-    }
-
-    if (this.selectedGems.length === 2) {
-      this.swapGems();
-    }
-
-  }
-
-  // **************************
-  // HELPER METHODS - INSTANCE
-  // **************************
-  updateScore(match) {
-    let numGemsMatched = match.length;
-    this.score += numGemsMatched;
-  }
-
-  getGemAbove(gem) {
-    let row = gem.row;
-    let col = gem.col;
-    return this.grid[row - 1][col];
-  }
-
-  changeGemType(gem, gemType) {
-    this.grid[gem.row][gem.col].type = gemType;
-  }
-
-  getRowsAndCols() {
-    let rows = this.grid;
-    let cols = [];
-
-    for (let col = 0; col < Bejeweled.boardSize; col++) {
-      let column = [];
-      rows.forEach(row => column.push(row[col]));
-      cols.push(column);
-    }
-
-    let rowsAndCols = [...rows, ...cols];
-    return rowsAndCols;
-  }
-
-  // **************************
-  // HELPER METHODS - STATIC
-  // **************************\
   static getRandomGemType() {
     let min = 0;
     let max = Bejeweled.gemTypes.length - 1
@@ -156,20 +185,6 @@ class Bejeweled {
   // *****************
   addDirectionCommand = (direction, directionFunction) => {
     Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
-  }
-
-  static fillBoardWithGems() {
-    for (let r = 0; r < Bejeweled.boardSize; r++) {
-      let rowOfGems = [];
-
-      for (let c = 0; c < Bejeweled.boardSize; c++) {
-        let gemType = Bejeweled.getRandomGemType();
-        rowOfGems.push({ row: r, col: c, type: gemType });
-        Screen.setGrid(r, c, gemType);
-      }
-      this.grid.push(rowOfGems);
-    }
-    Screen.render();
   }
 }
 

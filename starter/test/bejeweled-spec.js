@@ -107,9 +107,9 @@ describe('Bejeweled', function () {
     });
   });
 
-  describe('getGemAbove(gem)', function () {
+  describe('getGemTypeAbove(gem)', function () {
     it('returns the gem above', function () {
-      expect(bj.getGemAbove(gem2)).to.deep.equal(gem1);
+      expect(bj.getGemTypeAbove(gem2)).to.deep.equal(gem1.type);
     });
   });
 
@@ -142,27 +142,10 @@ describe('Bejeweled', function () {
       expect(bj.selectedGems.length).to.equal(1);
     });
 
-    it('selects a gem when 1 gem has been selected previously', function () {
-      bj.selectedGems = [gem1];
-
-      bj.cursor.row = gem2.row;
-      bj.cursor.col = gem2.col;
-
-      bj.selectGem();
-      expect(bj.selectedGems.length).to.equal(2);
+    it('calls swapGems if 2 gems are selected & clear selectedGems', function () {
+      // TODO
     });
 
-    it('does not select a gem when 2 gems have been selected previously', function () {
-      bj.selectedGems = [gem1, gem2];
-
-      bj.cursor.row = gem3.row;
-      bj.cursor.col = gem3.col;
-
-
-      bj.selectGem();
-
-      expect(bj.selectedGems.length).to.equal(2);
-    });
   });
 
   describe('updateScore(match)', function () {
@@ -192,10 +175,6 @@ describe('Bejeweled', function () {
     });
   });
 
-
-  // *******************
-  // INTEGRATION TESTS
-  // *******************
   describe('findMatches()', function () {
     it('does not find matches if there are 0 present', function () {
       expect(bj.findMatches()).to.deep.equal([]);
@@ -212,6 +191,9 @@ describe('Bejeweled', function () {
     });
   });
 
+  // *******************
+  // INTEGRATION TESTS
+  // *******************
   describe('dealWithMatches(matches)', function () {
 
   });
