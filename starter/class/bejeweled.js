@@ -25,6 +25,8 @@ class Bejeweled {
     this.addDirectionCommand('down', this.cursor.down);
     this.addDirectionCommand('left', this.cursor.left);
     this.addDirectionCommand('right', this.cursor.right);
+
+    Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
     Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
 
     console.log('Welcome to Bejeweled!\nPress one of the commands below to start playing.');
@@ -99,10 +101,14 @@ class Bejeweled {
     this.grid[gem2.row][gem2.col].type = gem1.type;
   }
 
-  selectGem(gem) {
+  selectGem() {
+    let gem = this.grid[this.cursor.row][this.cursor.col];
+
     if (this.selectedGems.length < 2) {
       this.selectedGems.push(gem);
     }
+
+    console.log('SELECTED GEMS', this.selectedGems);
   }
 
   updateScore(match) {
