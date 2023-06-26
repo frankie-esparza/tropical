@@ -17,30 +17,85 @@ describe('Bejeweled', function () {
   let bj;
   let grid;
   let gridAfterSwap;
+  let gridAfterSwap2;
+
   let gem1;
   let gem2;
 
+  let match1;
+  let match2;
+  let match3;
+
+  let matches1;
+  let matches2;
+  let matches3;
+
+  let rowsAndCols;
+  let rowWith2Matches;
+  let rowWith0Matches;
+
   beforeEach(function () {
+    // *************************************
+    // SCENARIO 1: 1 match, before swap (THIS GRID IS USED FOR MOST TESTS BELOW)
     grid = [
       [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥝' }], // match if you swap 🥝 & 🥥
       [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥥' }],
       [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
     ];
 
+    rowsAndCols = [
+      [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥝' }], // row 1
+      [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥥' }], // row 2
+      [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }], // row 3
+      [{ row: 0, col: 0, type: '🥥' }, { row: 1, col: 0, type: '🍉' }, { row: 2, col: 0, type: '🍓' }], // col 1
+      [{ row: 0, col: 1, type: '🥥' }, { row: 1, col: 1, type: '🍓' }, { row: 2, col: 1, type: '🥝' }], // col 2
+      [{ row: 0, col: 2, type: '🥝' }, { row: 1, col: 2, type: '🥥' }, { row: 2, col: 2, type: '🥝' }], // col 3
+    ];
+
+    rowWith0Matches = grid[0];
+
+    bj = new Bejeweled();
+    bj.grid = grid;
+    Bejeweled.boardSize = 3;
+
+    gem1 = { row: 0, col: 2, type: '🥝' };
+    gem2 = { row: 1, col: 2, type: '🥥' };
+    gem3 = { row: 1, col: 2, gem: '🍉' };
+
+    // *************************************
+    // SCENARIO 2: 1 match, after swap
     gridAfterSwap = [
       [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
       [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥝' }],
       [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
     ];
 
-    gem1 = { row: 0, col: 2, type: '🥝' };
-    gem2 = { row: 1, col: 2, type: '🥥' };
-    gem3 = { row: 1, col: 2, gem: '🍉' };
+    match1 = [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }];
+    matches1 = [match1];
 
-    bj = new Bejeweled();
-    bj.grid = grid;
+    // *************************************
+    // SCENARIO 3: 2 matches, after swap
+    gridAfterSwap2 = [
+      [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
+      [{ row: 1, col: 0, type: '🥝' }, { row: 1, col: 1, type: '🥝' }, { row: 1, col: 2, type: '🥝' }],
+      [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
+    ];
 
+    match2 = [gridAfterSwap[1][0], gridAfterSwap[1][1], gridAfterSwap[1][2]];
+    matches2 = [match1, match2];
+
+    // *************************************
+    // SCENARIO 4: 2 matches in same row
+    match3 = [{ row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }];
+
+    rowWith2Matches = [
+      { row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' },
+      { row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }
+    ];
+
+    matches3 = [match1, match3];
   });
+
 
   // *******************
   // UNIT TESTS
@@ -97,17 +152,49 @@ describe('Bejeweled', function () {
 
   describe('updateScore(match)', function () {
     it('adds 1 point for each gem matched', function () {
-      let match = [gridAfterSwap[0][0], gridAfterSwap[0][1], gridAfterSwap[0][2]];
-      bj.updateScore(match);
+      bj.updateScore(match1);
       expect(bj.score).to.equal(3);
     });
   });
+
+  describe('getRowsAndCols()', function () {
+    it('gets all rows and columns in the grid', function () {
+      expect(bj.getRowsAndCols()).to.deep.equal(rowsAndCols);
+    });
+  });
+
+  describe('findMatchesInArray(array)', function () {
+    it('does not find match if array contains 0 matches', function () {
+      expect(Bejeweled.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
+    });
+
+    it('finds match if array contains 1 match', function () {
+      expect(Bejeweled.findMatchesInArray(match1)).to.deep.equal(matches1);
+    });
+
+    it('finds match if array contains 2 matches', function () {
+      expect(Bejeweled.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
+    });
+  });
+
 
   // *******************
   // INTEGRATION TESTS
   // *******************
   describe('findMatches()', function () {
+    it('does not find matches if there are 0 present', function () {
+      expect(bj.findMatches()).to.equal([]);
+    });
 
+    it('finds matches if there is 1 present', function () {
+      bj.grid = gridAfterSwap;
+      expect(bj.findMatches()).to.deep.equal(matches1);
+    });
+
+    it('finds matches if there are 2 present', function () {
+      bj.grid = gridAfterSwap2;
+      expect(bj.findMatches()).to.deep.equal(matches2);
+    });
   });
 
   describe('dealWithMatches(matches)', function () {

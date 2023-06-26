@@ -32,8 +32,58 @@ class Bejeweled {
   }
 
   // *****************
-  // INSTANCE METHODS
+  // INTEGRATION
   // *****************
+  findMatches() {
+    let rowsAndCols = this.getRowsAndCols();
+    let matches = [];
+
+    rowsAndCols.forEach(rowOrCol => {
+      let matchesInArray = Bejeweled.findMatchesInArray();
+
+      matchesInArray.forEach(match => {
+        matches.push(match);
+      });
+    });
+
+    return matches;
+  }
+
+  static findMatchesInArray(array) {
+    let matchType = array[0].type;
+    let matches = [];
+    let match = [];
+
+    for (let i = 0; i < array.length; i++) {
+      let el = array[i];
+      console.log(matchType);
+
+      if (el.type === matchType) {
+        match.push(el);
+        console.log('MATCH', match);
+
+      } else {
+        matchType = el.type;
+
+        if (match.length >= 3) {
+          matches.push(match);
+          match = [el];
+        }
+      }
+    }
+
+    if (match.length >= 3) {
+      matches.push(match);
+    }
+
+    return matches;
+  }
+
+
+
+  // **************************
+  // HELPER METHODS - INSTANCE
+  // **************************
   getGemAbove(gem) {
     let row = gem.row;
     let col = gem.col;
@@ -60,12 +110,36 @@ class Bejeweled {
     this.score += numGemsMatched;
   }
 
+  getRowsAndCols() {
+    let rows = this.grid;
+    let cols = [];
+
+    for (let col = 0; col < Bejeweled.boardSize; col++) {
+      let column = [];
+      rows.forEach(row => column.push(row[col]));
+      cols.push(column);
+    }
+
+    let rowsAndCols = [...rows, ...cols];
+    return rowsAndCols;
+  }
+
+  // **************************
+  // HELPER METHODS - STATIC
+  // **************************\
+  static getRandomGemType() {
+    let min = 0;
+    let max = Bejeweled.gemTypes.length - 1
+    let randomIndex = Math.floor(Math.random() * (max - min + 1) + min); // inclusive of min & max
+    let randomGemType = Bejeweled.gemTypes[randomIndex];
+    return randomGemType;
+  }
 
   // *****************
-  // STATIC METHODS
+  // CONSTRUCTOR HELPER METHODS
   // *****************
-  static checkForMatches() {
-
+  addDirectionCommand = (direction, directionFunction) => {
+    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
   }
 
   static fillBoardWithGems() {
@@ -81,21 +155,18 @@ class Bejeweled {
     }
     Screen.render();
   }
-
-  static getRandomGemType() {
-    let min = 0;
-    let max = Bejeweled.gemTypes.length - 1
-    let randomIndex = Math.floor(Math.random() * (max - min + 1) + min); // inclusive of min & max
-    let randomGemType = Bejeweled.gemTypes[randomIndex];
-    return randomGemType;
-  }
-
-  // *****************
-  // CONSTRUCTOR HELPER METHODS
-  // *****************
-  addDirectionCommand = (direction, directionFunction) => {
-    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
-  }
 }
 
 module.exports = Bejeweled;
+
+// bj = new Bejeweled();
+// bj.grid = grid;
+// Bejeweled.boardSize = 6;
+let match1 = [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }];
+let match3 = [{ row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }];
+let rowWith2Matches = [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' },
+{ row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }];
+let matches3 = [match1, match3];
+
+console.log('MATCHES', Bejeweled.findMatchesInArray(rowWith2Matches));
+console.log('EXPECTED', matches3);
