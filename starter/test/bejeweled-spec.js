@@ -81,7 +81,7 @@ describe('Bejeweled', function () {
       [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
     ];
 
-    match2 = [gridAfterSwap[1][0], gridAfterSwap[1][1], gridAfterSwap[1][2]];
+    match2 = [gridAfterSwap2[1][0], gridAfterSwap2[1][1], gridAfterSwap2[1][2]];
     matches2 = [match1, match2];
 
     // *************************************
@@ -183,7 +183,7 @@ describe('Bejeweled', function () {
   // *******************
   describe('findMatches()', function () {
     it('does not find matches if there are 0 present', function () {
-      expect(bj.findMatches()).to.equal([]);
+      expect(bj.findMatches()).to.deep.equal([]);
     });
 
     it('finds matches if there is 1 present', function () {
