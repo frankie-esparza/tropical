@@ -123,9 +123,11 @@ describe('Bejeweled', function () {
     });
   });
 
-  describe('swapGems(gem1, gem2)', function () {
+  describe('swapGems()', function () {
     it('swaps the gemTypes of the 2 gems specified', function () {
-      bj.swapGems(gem1, gem2);
+      bj.selectedGems = [gem1, gem2];
+      bj.swapGems();
+
       expect(bj.grid[gem1.row][gem1.col].type).to.equal('🥥');
       expect(bj.grid[gem2.row][gem2.col].type).to.equal('🥝');
     });
