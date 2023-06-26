@@ -96,7 +96,10 @@ class Bejeweled {
     this.grid[gem.row][gem.col].type = gemType;
   }
 
-  swapGems(gem1, gem2) {
+  swapGems() {
+    let gem1 = this.selectedGems[0];
+    let gem2 = this.selectedGems[1];
+
     this.grid[gem1.row][gem1.col].type = gem2.type;
     this.grid[gem2.row][gem2.col].type = gem1.type;
   }
@@ -106,6 +109,10 @@ class Bejeweled {
 
     if (this.selectedGems.length < 2) {
       this.selectedGems.push(gem);
+    }
+
+    if (this.selectedGems.length === 2) {
+      this.swapGems();
     }
 
     console.log('SELECTED GEMS', this.selectedGems);
