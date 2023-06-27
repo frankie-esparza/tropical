@@ -20,17 +20,7 @@ class Bejeweled {
 
     // set up board
     this.fillBoardWithRandomGems();
-    this.matches = this.findMatches();
-
-    while (this.matches.length) {
-      this.numBoardRefreshes++;
-      this.starMatches();
-      this.clearMatches();
-      this.matches = this.findMatches.call(this);
-    }
-
-    this.updateScreen();
-    Screen.render();
+    this.dealWithMatches();
 
     // set up commands
     this.addDirectionCommand('up', this.cursor.up);
@@ -47,6 +37,21 @@ class Bejeweled {
   // *****************
   // INTEGRATION
   // *****************
+
+  dealWithMatches() {
+    this.matches = this.findMatches();
+
+    while (this.matches.length) {
+      this.numBoardRefreshes++;
+      this.starMatches();
+      this.clearMatches();
+      this.matches = this.findMatches.call(this);
+    }
+
+    this.updateScreen();
+    Screen.render();
+  }
+
   fillBoardWithRandomGems() {
     for (let r = 0; r < Bejeweled.boardSize; r++) {
       let row = [];
@@ -68,6 +73,8 @@ class Bejeweled {
         Screen.setGrid(el.row, el.col, el.type);
       }
     }
+
+    Screen.render();
   }
 
   findMatches() {
@@ -92,6 +99,9 @@ class Bejeweled {
         el.type = '⭐️';
       });
     });
+
+    this.updateScreen();
+    Screen.render();
   }
 
   clearMatches() {
@@ -186,13 +196,13 @@ class Bejeweled {
   swapGems() {
     let gem1 = this.selectedGems[0];
     let gem2 = this.selectedGems[1];
+    let gem1Type = gem1.type;
+    let gem2Type = gem2.type;
 
-    Screen.setGrid(gem1.row, gem1.col, gem2.type);
-    Screen.setGrid(gem2.row, gem2.col, gem1.type);
-    Screen.render();
+    this.grid[gem1.row][gem1.col].type = gem2Type;
+    this.grid[gem2.row][gem2.col].type = gem1Type;
 
-    this.grid[gem1.row][gem1.col].type = gem2.type;
-    this.grid[gem2.row][gem2.col].type = gem1.type;
+    this.updateScreen();
 
     this.selectedGems = [];
   }
@@ -205,7 +215,22 @@ class Bejeweled {
     }
 
     if (this.selectedGems.length === 2) {
+      let gem1 = this.selectedGems[0];
+      let gem2 = this.selectedGems[1];
+
       this.swapGems();
+
+      let matches = this.findMatches();
+
+      if (matches.length > 0) {
+        console.log('You found a match!');
+        setTimeout(this.starMatches.bind(this), 1000);
+        setTimeout(this.dealWithMatches.bind(this), 3000);
+      } else {
+        console.log('No match, try again');
+        this.selectedGems = [gem1, gem2];
+        setTimeout(this.swapGems.bind(this), 3000);
+      }
     }
   }
 
