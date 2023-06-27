@@ -21,6 +21,11 @@ class Bejeweled {
     Bejeweled.initializeBoard.call(this);
     Screen.render();
 
+    let matches = this.findMatches();
+    console.log('MATCHES', matches)
+    // this.clearMatches();
+
+
     this.addDirectionCommand('up', this.cursor.up);
     this.addDirectionCommand('down', this.cursor.down);
     this.addDirectionCommand('left', this.cursor.left);
@@ -94,6 +99,7 @@ class Bejeweled {
   }
 
   static initializeBoard() {
+    // fill with random gems
     for (let r = 0; r < Bejeweled.boardSize; r++) {
       let rowOfGems = [];
 
@@ -104,7 +110,6 @@ class Bejeweled {
       }
       this.grid.push(rowOfGems);
     }
-    Screen.render();
   }
 
   // **************************
@@ -149,19 +154,18 @@ class Bejeweled {
 
     for (let i = 0; i < array.length; i++) {
       let el = array[i];
-      console.log(matchType);
 
       if (el.type === matchType) {
         match.push(el);
-        console.log('MATCH', match);
 
       } else {
         matchType = el.type;
 
         if (match.length >= 3) {
           matches.push(match);
-          match = [el];
         }
+
+        match = [el];
       }
     }
 

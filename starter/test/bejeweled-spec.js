@@ -29,10 +29,12 @@ describe('Bejeweled', function () {
   let matches1;
   let matches2;
   let matches3;
+  let matches4;
 
   let rowsAndCols;
   let rowWith2Matches;
   let rowWith0Matches;
+  let rowWithMatchof2;
 
   beforeEach(function () {
     // *************************************
@@ -94,8 +96,18 @@ describe('Bejeweled', function () {
     ];
 
     matches3 = [match1, match3];
-  });
 
+    // **************************************
+    // SCENARIO 5: row contains a match of 2, and then 1 match
+    rowWithMatchof2 = [
+      { row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🍉' }, { row: 0, col: 3, type: '🥝' },
+      { row: 0, col: 4, type: '🥝' }, { row: 0, col: 5, type: '🥝' }, { row: 0, col: 6, type: '🥝' }, { row: 0, col: 7, type: '🥝' }
+    ];
+
+    matches4 = [[{ row: 0, col: 3, type: '🥝' }, { row: 0, col: 4, type: '🥝' }, { row: 0, col: 5, type: '🥝' },
+    { row: 0, col: 6, type: '🥝' }, { row: 0, col: 7, type: '🥝' }]];
+
+  });
 
   // *******************
   // UNIT TESTS
@@ -173,6 +185,12 @@ describe('Bejeweled', function () {
     it('finds match if array contains 2 matches', function () {
       expect(Bejeweled.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
     });
+
+    it('finds match if array contains a match of 2, and then 1 match', function () {
+      expect(Bejeweled.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
+    });
+
+
   });
 
   describe('findMatches()', function () {
@@ -194,11 +212,11 @@ describe('Bejeweled', function () {
   // *******************
   // INTEGRATION TESTS
   // *******************
-  describe('dealWithMatches(matches)', function () {
+  describe('clearMatches(matches)', function () {
 
   });
 
-  describe('clearMatches(matches)', function () {
-
+  describe('dealWithMatches(matches)', function () {
+    // TODO
   });
 });
