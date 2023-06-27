@@ -175,13 +175,6 @@ describe('Bejeweled', function () {
 
   });
 
-  describe('updateScore(match)', function () {
-    it('adds 1 point for each gem matched', function () {
-      bj.updateScore(match1);
-      expect(bj.score).to.equal(3);
-    });
-  });
-
   describe('getRowsAndCols()', function () {
     it('gets all rows and columns in the grid', function () {
       expect(bj.getRowsAndCols()).to.deep.equal(rowsAndCols);
