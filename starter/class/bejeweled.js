@@ -33,7 +33,7 @@ class Bejeweled {
     Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
     Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
 
-    console.log('Welcome to Bejeweled!\nPress one of the commands below to start playing.');
+    console.log('🥥🍓🥝🍉 Welcome to Bejeweled! 🥥🍓🥝🍉\nPress one of the commands below to start playing.');
     Screen.printCommands();
   }
 
@@ -53,7 +53,7 @@ class Bejeweled {
     this.updateScreen();
     Screen.render();
     console.log(`SCORE: ${this.score}`);
-    console.log(`GEMS COLLECTED: ${this.scoreString}`);
+    console.log(`GEMS COLLECTED: ${this.scoreString}\n`);
   }
 
   fillBoardWithRandomGems() {
@@ -234,11 +234,11 @@ class Bejeweled {
       let matches = this.findMatches();
 
       if (matches.length > 0) {
-        console.log('You found a match!');
-        setTimeout(this.starMatches.bind(this), 500);
+        console.log('⭐️⭐️⭐️ Nice! You found a match!');
+        setTimeout(this.starMatches.bind(this), 1000);
         setTimeout(this.dealWithMatches.bind(this), 3000);
       } else {
-        console.log('No match, try again');
+        console.log("❌ That swap doesn't reslt in a match, please try again.");
         this.selectedGems = [gem1, gem2];
         setTimeout(this.swapGems.bind(this), 3000);
       }
@@ -270,6 +270,10 @@ class Bejeweled {
 
     let rowsAndCols = [...rows, ...cols];
     return rowsAndCols;
+  }
+
+  addDirectionCommand = (direction, directionFunction) => {
+    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
   }
 
   // **************************
@@ -311,26 +315,6 @@ class Bejeweled {
     let randomGemType = Bejeweled.gemTypes[randomIndex];
     return randomGemType;
   }
-
-  // *****************
-  // CONSTRUCTOR HELPER METHODS
-  // *****************
-  addDirectionCommand = (direction, directionFunction) => {
-    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
-  }
 }
 
 module.exports = Bejeweled;
-
-let col4 = [
-  { row: 0, col: 0, type: '⭐️' },
-  { row: 1, col: 0, type: '🍉' },
-  { row: 2, col: 0, type: '⭐️' },
-  { row: 3, col: 0, type: '🥭' },
-  { row: 4, col: 0, type: '🫐' },
-  { row: 5, col: 0, type: '⭐️' },
-  { row: 6, col: 0, type: '⭐️' },
-  { row: 7, col: 0, type: '⭐️' },
-];
-
-console.log('FINAL', Bejeweled.makeAllGemsFall(col4));
