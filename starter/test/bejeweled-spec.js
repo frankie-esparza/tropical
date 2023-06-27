@@ -25,6 +25,8 @@ describe('Bejeweled', function () {
 
   let gem1;
   let gem2;
+  let gem3;
+  let gem4;
 
   let match1;
   let match2;
@@ -67,6 +69,7 @@ describe('Bejeweled', function () {
     gem1 = { row: 0, col: 2, type: '🥝' };
     gem2 = { row: 1, col: 2, type: '🥥' };
     gem3 = { row: 1, col: 2, gem: '🍉' };
+    gem4 = { row: 0, col: 1, type: '🥥' };
 
     // *************************************
     // SCENARIO 2: 1 match, after swap
@@ -140,12 +143,20 @@ describe('Bejeweled', function () {
   });
 
   describe('swapGems()', function () {
-    it('swaps the gemTypes of the 2 gems specified', function () {
+    it('swaps the gemTypes of the 2 gems specified, if swap results in match', function () {
       bj.selectedGems = [gem1, gem2];
       bj.swapGems();
 
       expect(bj.grid[gem1.row][gem1.col].type).to.equal('🥥');
       expect(bj.grid[gem2.row][gem2.col].type).to.equal('🥝');
+    });
+
+    it('does not swap the gemTypes of the 2 gems specified, if swap does NOT result in match', function () {
+      bj.selectedGems = [gem1, gem4];
+      bj.swapGems();
+
+      expect(bj.grid[gem1.row][gem1.col].type).to.equal(gem1.type);
+      expect(bj.grid[gem4.row][gem4.col].type).to.equal(gem4.type);
     });
   });
 
