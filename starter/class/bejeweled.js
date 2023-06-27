@@ -11,6 +11,8 @@ class Bejeweled {
     this.grid = [];
     this.selectedGems = [];
     this.score = 0;
+    this.scoreString = '';
+    this.gameStarted = false;
 
     this.cursor = new Cursor(Bejeweled.boardSize, Bejeweled.boardSize);
     this.cursor.setBackgroundColor();
@@ -21,6 +23,7 @@ class Bejeweled {
     // set up board
     this.fillBoardWithRandomGems();
     this.dealWithMatches();
+    this.gameStarted = true;
 
     // set up commands
     this.addDirectionCommand('up', this.cursor.up);
@@ -41,8 +44,7 @@ class Bejeweled {
   dealWithMatches() {
     this.matches = this.findMatches();
 
-    while (this.matches.length) {
-      this.numBoardRefreshes++;
+    while (this.matches.length > 0) {
       this.starMatches();
       this.clearMatches();
       this.matches = this.findMatches.call(this);
@@ -50,6 +52,8 @@ class Bejeweled {
 
     this.updateScreen();
     Screen.render();
+    console.log(`SCORE: ${this.score}`);
+    console.log(`GEMS COLLECTED: ${this.scoreString}`);
   }
 
   fillBoardWithRandomGems() {
@@ -96,12 +100,19 @@ class Bejeweled {
 
     matches.forEach(match => {
       match.forEach(el => {
+        let gemType = el.type;
+
         el.type = '⭐️';
+
+        if (this.gameStarted && gemType !== '⭐️') {
+          this.score++;
+          this.scoreString += gemType;
+        }
       });
     });
 
     this.updateScreen();
-    Screen.render();
+    Screen.render()
   }
 
   clearMatches() {
@@ -224,7 +235,7 @@ class Bejeweled {
 
       if (matches.length > 0) {
         console.log('You found a match!');
-        setTimeout(this.starMatches.bind(this), 1000);
+        setTimeout(this.starMatches.bind(this), 500);
         setTimeout(this.dealWithMatches.bind(this), 3000);
       } else {
         console.log('No match, try again');
@@ -237,11 +248,6 @@ class Bejeweled {
   // **************************
   // HELPER METHODS - INSTANCE
   // **************************
-  updateScore(match) {
-    let numGemsMatched = match.length;
-    this.score += numGemsMatched;
-  }
-
   getGemTypeAbove(gem) {
     let row = gem.row;
     let col = gem.col;
