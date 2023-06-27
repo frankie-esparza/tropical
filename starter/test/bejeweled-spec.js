@@ -1,5 +1,9 @@
 const { expect } = require('chai');
 
+const chai = require('chai')
+  , spies = require('chai-spies');
+chai.use(spies);
+
 const Bejeweled = require("../class/bejeweled.js");
 
 describe('Bejeweled', function () {
@@ -173,6 +177,10 @@ describe('Bejeweled', function () {
     });
   });
 
+  //*****************
+  // FIND MATCHES
+  //*****************
+
   describe('findMatchesInArray(array)', function () {
     it('does not find match if array contains 0 matches', function () {
       expect(Bejeweled.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
@@ -189,8 +197,6 @@ describe('Bejeweled', function () {
     it('finds match if array contains a match of 2, and then 1 match', function () {
       expect(Bejeweled.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
     });
-
-
   });
 
   describe('findMatches()', function () {
@@ -208,15 +214,272 @@ describe('Bejeweled', function () {
       expect(bj.findMatches()).to.deep.equal(matches2);
     });
   });
+});
 
-  // *******************
+//*****************
+// CLEAR MATCHES
+//*****************
+describe('Bejeweled', function () {
+  let col1;
+  let col2;
+  let col3;
+  let col4;
+
+  let col3_afterFall;
+  let col4_afterFall;
+
+  let col3_afterAllGemsFall;
+  let col4_afterAllGemsFall;
+
+  let numStars3;
+  let numStars4;
+
+  let lowestStar1;
+  let lowestStar2;
+  let lowestStar3;
+  let lowestStar4;
+
+  let lowestGemAboveStar1;
+  let lowestGemAboveStar2;
+  let lowestGemAboveStar3;
+  let lowestGemAboveStar4;
+
+  beforeEach(function () {
+    // *******************************
+    // 0 Sets of Falling Gems, 0 matches
+    col1 = [
+      { row: 0, col: 0, type: '🥥' }, // no matches
+      { row: 1, col: 0, type: '🥥' },
+      { row: 2, col: 0, type: '🍇' },
+      { row: 3, col: 0, type: '🍇' },
+      { row: 4, col: 0, type: '🥭' },
+      { row: 5, col: 0, type: '🥭' },
+      { row: 6, col: 0, type: '🍑' },
+      { row: 7, col: 0, type: '🍑' },
+    ];
+
+    lowestStar1 = null;
+    lowestGemAboveStar1 = null;
+
+    // *******************************
+    // 0 Sets of Falling Gems, 1 match
+    col2 = [
+      { row: 0, col: 0, type: '⭐️' }, // nothing will fall down, starts will become rand gems
+      { row: 1, col: 0, type: '⭐️' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '⭐️' },
+      { row: 4, col: 0, type: '🥭' },
+      { row: 5, col: 0, type: '🫐' },
+      { row: 6, col: 0, type: '🍑' },
+      { row: 7, col: 0, type: '🍒' },
+    ];
+
+    lowestStar2 = { row: 3, col: 0, type: '⭐️' };
+    lowestGemAboveStar2 = null;
+
+    // ***********************
+    // 1 Set of Falling Gems
+    col3 = [
+      { row: 0, col: 0, type: '🥭' }, // mangos will fall down
+      { row: 1, col: 0, type: '🥭' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '⭐️' },
+      { row: 4, col: 0, type: '⭐️' },
+      { row: 5, col: 0, type: '🫐' },
+      { row: 6, col: 0, type: '🍑' },
+      { row: 7, col: 0, type: '🍒' },
+    ];
+
+    col3_afterFall = [
+      { row: 0, col: 0, type: '🥭' }, // mangos will fall down
+      { row: 1, col: 0, type: '⭐️' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '⭐️' },
+      { row: 4, col: 0, type: '🥭' },
+      { row: 5, col: 0, type: '🫐' },
+      { row: 6, col: 0, type: '🍑' },
+      { row: 7, col: 0, type: '🍒' },
+    ];
+
+    lowestStar3 = { row: 4, col: 0, type: '⭐️' };
+    lowestGemAboveStar3 = { row: 1, col: 0, type: '🥭' };
+
+    col3_afterAllGemsFall = [
+      { row: 0, col: 0, type: '⭐️' }, // mangos will fall down
+      { row: 1, col: 0, type: '⭐️' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '🥭' },
+      { row: 4, col: 0, type: '🥭' },
+      { row: 5, col: 0, type: '🫐' },
+      { row: 6, col: 0, type: '🍑' },
+      { row: 7, col: 0, type: '🍒' },
+    ];
+
+    numStars3 = 3;
+
+    // ***********************
+    // 2 Sets of Falling Gems
+    col4 = [
+      { row: 0, col: 0, type: '⭐️' },
+      { row: 1, col: 0, type: '🍉' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '🥭' },
+      { row: 4, col: 0, type: '🫐' },
+      { row: 5, col: 0, type: '⭐️' },
+      { row: 6, col: 0, type: '⭐️' },
+      { row: 7, col: 0, type: '⭐️' },
+    ];
+
+    col4_afterFall = [
+      { row: 0, col: 0, type: '⭐️' },
+      { row: 1, col: 0, type: '🍉' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '🥭' },
+      { row: 4, col: 0, type: '⭐️' },
+      { row: 5, col: 0, type: '⭐️' },
+      { row: 6, col: 0, type: '⭐️' },
+      { row: 7, col: 0, type: '🫐' },
+    ];
+
+    lowestStar4 = { row: 7, col: 0, type: '⭐️' };
+    lowestGemAboveStar4 = { row: 4, col: 0, type: '🫐' };
+
+    col4_afterAllGemsFall = [
+      { row: 0, col: 0, type: '⭐️' },
+      { row: 1, col: 0, type: '⭐️' },
+      { row: 2, col: 0, type: '⭐️' },
+      { row: 3, col: 0, type: '⭐️' },
+      { row: 4, col: 0, type: '⭐️' },
+      { row: 5, col: 0, type: '🍉' },
+      { row: 6, col: 0, type: '🥭' },
+      { row: 7, col: 0, type: '🫐' },
+    ];
+
+    numStars4 = 5;
+  });
+
+  // **********
+  // UNIT TESTS
+  // **********
+
+  describe('findLowestStar(column)', function () {
+    it('does NOT find lowest star when one is NOT present', function () {
+      expect(Bejeweled.findLowestStar(col1)).to.be.deep.equal(lowestStar1);
+    });
+    it('finds lowest star when one is present', function () {
+      expect(Bejeweled.findLowestStar(col2)).to.be.deep.equal(lowestStar2);
+      expect(Bejeweled.findLowestStar(col3)).to.be.deep.equal(lowestStar3);
+      expect(Bejeweled.findLowestStar(col4)).to.be.deep.equal(lowestStar4);
+    });
+  });
+
+  describe('findLowestGemAboveStar(column, star)', function () {
+    it('does NOT find lowest gem above star when one is NOT present', function () {
+      expect(Bejeweled.findLowestGemAboveStar(col1, lowestStar1)).to.be.deep.equal(lowestGemAboveStar1);
+      expect(Bejeweled.findLowestGemAboveStar(col2, lowestStar2)).to.be.deep.equal(lowestGemAboveStar2);
+    });
+
+    it('finds lowest gem above star when one is present', function () {
+      expect(Bejeweled.findLowestGemAboveStar(col3, lowestStar3)).to.be.deep.equal(lowestGemAboveStar3);
+      expect(Bejeweled.findLowestGemAboveStar(col4, lowestStar4)).to.be.deep.equal(lowestGemAboveStar4);
+
+    });
+  });
+
+  describe('makeOneGemFall(column, star, gem)', function () {
+    it('makes 1 gem fall when theres a falling gem present', function () {
+      expect(Bejeweled.makeOneGemFall(col3, lowestStar3, lowestGemAboveStar3)).to.deep.equal(col3_afterFall);
+      expect(Bejeweled.makeOneGemFall(col4, lowestStar4, lowestGemAboveStar4)).to.deep.equal(col4_afterFall);
+    });
+  });
+
+  describe('addRandomGemsAtTop(column)', function () {
+    it('should call getRandomGemType() for each star', function () {
+      let spy = chai.spy.on(Bejeweled, 'getRandomGemType');
+
+      Bejeweled.addRandomGemsAtTop(col3_afterAllGemsFall);
+      expect(spy).to.have.been.called.exactly(numStars3);
+
+      Bejeweled.addRandomGemsAtTop(col1);
+      expect(spy).to.have.been.called.exactly(numStars3); // since col1 has no stars, num times called should stay same
+    });
+  });
+
+  // ******************
   // INTEGRATION TESTS
-  // *******************
-  describe('clearMatches(matches)', function () {
-
+  // ******************
+  describe('makeAllGemsFall(column)', function () {
+    it('makes all gems fall when theres a falling gems present', function () {
+      expect(Bejeweled.makeAllGemsFall(col3)).to.deep.equal(col3_afterAllGemsFall);
+      expect(Bejeweled.makeAllGemsFall(col4)).to.deep.equal(col4_afterAllGemsFall);
+    });
   });
 
-  describe('dealWithMatches(matches)', function () {
-    // TODO
+  describe('starMatches()', function () {
+    let bj;
+    let grid_beforeStar;
+    let grid_afterStar;
+
+
+    beforeEach(function () {
+      bj = new Bejeweled();
+
+      grid_beforeStar = [
+        [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
+        [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥝' }],
+        [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
+      ];
+
+      grid_afterStar = [
+        [{ row: 0, col: 0, type: '⭐️' }, { row: 0, col: 1, type: '⭐️' }, { row: 0, col: 2, type: '⭐️' }],
+        [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥝' }],
+        [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
+      ];
+
+    });
+
+    it('should star all matches', function () {
+      bj.grid = grid_beforeStar;
+      bj.starMatches();
+      expect(bj.grid).to.deep.equal(grid_afterStar);
+    });
   });
+
+  describe('clearMatches()', function () {
+    let bj;
+    let grid_beforeStar;
+    let grid_afterStar;
+
+
+    beforeEach(function () {
+      bj = new Bejeweled();
+
+      grid_beforeStar = [
+        [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
+        [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥝' }],
+        [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
+      ];
+
+      grid_afterStar = [
+        [{ row: 0, col: 0, type: '⭐️' }, { row: 0, col: 1, type: '⭐️' }, { row: 0, col: 2, type: '⭐️' }],
+        [{ row: 1, col: 0, type: '🍉' }, { row: 1, col: 1, type: '🍓' }, { row: 1, col: 2, type: '🥝' }],
+        [{ row: 2, col: 0, type: '🍓' }, { row: 2, col: 1, type: '🥝' }, { row: 2, col: 2, type: '🥝' }],
+      ];
+
+    });
+
+    it('should call makeAllGemsFall() & addRandomGemsAtTop() once for each column', function () {
+      bj.grid = grid_afterStar;
+
+      let spy2 = chai.spy.on(Bejeweled, 'makeAllGemsFall');
+      let spy3 = chai.spy.on(Bejeweled, 'addRandomGemsAtTop');
+
+      bj.clearMatches();
+
+      expect(spy2).to.have.been.called.exactly(3);
+      expect(spy3).to.have.been.called.exactly(3);
+    });
+  });
+
+
 });
