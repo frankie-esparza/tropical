@@ -6,8 +6,6 @@ class Bejeweled {
   static gemTypes = ['🥥', '🍓', '🥝', '🍉'];
 
   constructor() {
-    this.playerTurn = "O";
-
     this.grid = [];
     this.selectedGems = [];
     this.score = 0;
@@ -33,13 +31,15 @@ class Bejeweled {
     Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
     Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
 
-    console.log('🥥🍓🥝🍉 Welcome to Bejeweled! 🥥🍓🥝🍉\nPress one of the commands below to start playing.');
+    let welcomeStrings = [
+      '🥥🍓🥝🍉 Welcome to Bejeweled! 🥥🍓🥝🍉\n',
+      '* The goal of the game is to make matches of at least 3 gems of the same type.',
+      '* Make a match by selecting 2 gems that when swapped, create at least 1 match.',
+      '* Press one of the commands below to start playing.'];
+
+    welcomeStrings.forEach(string => console.log(string));
     Screen.printCommands();
   }
-
-  // *****************
-  // INTEGRATION
-  // *****************
 
   dealWithMatches() {
     this.matches = this.findMatches();
@@ -56,17 +56,6 @@ class Bejeweled {
     console.log(`GEMS COLLECTED: ${this.scoreString}\n`);
   }
 
-  fillBoardWithRandomGems() {
-    for (let r = 0; r < Bejeweled.boardSize; r++) {
-      let row = [];
-      for (let c = 0; c < Bejeweled.boardSize; c++) {
-        let gemType = Bejeweled.getRandomGemType();
-        row.push({ row: r, col: c, type: gemType });
-      }
-      this.grid.push(row);
-    }
-  }
-
   updateScreen() {
     let numRows = this.grid.length;
     let numCols = this.grid[0].length;
@@ -77,7 +66,6 @@ class Bejeweled {
         Screen.setGrid(el.row, el.col, el.type);
       }
     }
-
     Screen.render();
   }
 
@@ -124,86 +112,6 @@ class Bejeweled {
     });
   }
 
-  getColumns() {
-    let numRows = this.grid.length;
-    let numCols = this.grid[0].length;
-    let columns = [];
-
-    for (let col = 0; col < numCols; col++) {
-      let column = [];
-
-      for (let row = 0; row < numRows; row++) {
-        column.push(this.grid[row][col]);
-      }
-
-      columns.push(column);
-    }
-
-    return columns;
-  }
-
-  static addRandomGemsAtTop(column) {
-    for (let row = 0; row < column.length - 1; row++) {
-      let el = column[row];
-      if (el.type === '⭐️') {
-        el.type = Bejeweled.getRandomGemType();
-      } else {
-        break;
-      }
-    }
-
-    return column;
-  }
-
-  static makeAllGemsFall(column) {
-    let lowestStar = Bejeweled.findLowestStar(column);
-    let lowestGemAboveStar = Bejeweled.findLowestGemAboveStar(column, lowestStar);
-
-    while (lowestStar && lowestGemAboveStar) {
-      column = Bejeweled.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
-      lowestStar = Bejeweled.findLowestStar(column);
-      lowestGemAboveStar = Bejeweled.findLowestGemAboveStar(column, lowestStar);
-    }
-
-    return column;
-  }
-
-  static makeOneGemFall(column, star, gem) {
-    column[star.row].type = gem.type;
-    column[gem.row].type = '⭐️';
-
-    return column;
-  }
-
-  static findLowestStar(column) {
-    let top = 0;
-    let bottom = column.length - 1;
-
-    for (let i = bottom; i >= top; i--) {
-      if (column[i].type === '⭐️' && i !== top) {
-
-        return column[i];
-      }
-    }
-    return null;
-  }
-
-  static findLowestGemAboveStar(column, star) {
-    if (star === null) {
-      return null;
-    }
-
-    let top = 0
-    let bottom = star.row - 1;
-
-    for (let i = bottom; i >= top; i--) {
-      if (column[i].type !== '⭐️') {
-        return column[i];
-      }
-    }
-    return null;
-  }
-
   swapGems() {
     let gem1 = this.selectedGems[0];
     let gem2 = this.selectedGems[1];
@@ -245,9 +153,36 @@ class Bejeweled {
     }
   }
 
+  fillBoardWithRandomGems() {
+    for (let r = 0; r < Bejeweled.boardSize; r++) {
+      let row = [];
+      for (let c = 0; c < Bejeweled.boardSize; c++) {
+        let gemType = Bejeweled.getRandomGemType();
+        row.push({ row: r, col: c, type: gemType });
+      }
+      this.grid.push(row);
+    }
+  }
+
   // **************************
   // HELPER METHODS - INSTANCE
   // **************************
+  getColumns() {
+    let numRows = this.grid.length;
+    let numCols = this.grid[0].length;
+    let columns = [];
+
+    for (let col = 0; col < numCols; col++) {
+      let column = [];
+
+      for (let row = 0; row < numRows; row++) {
+        column.push(this.grid[row][col]);
+      }
+      columns.push(column);
+    }
+    return columns;
+  }
+
   getGemTypeAbove(gem) {
     let row = gem.row;
     let col = gem.col;
@@ -279,6 +214,66 @@ class Bejeweled {
   // **************************
   // HELPER METHODS - STATIC
   // **************************
+  static addRandomGemsAtTop(column) {
+    for (let row = 0; row < column.length - 1; row++) {
+      let el = column[row];
+      if (el.type === '⭐️') {
+        el.type = Bejeweled.getRandomGemType();
+      } else {
+        break;
+      }
+    }
+    return column;
+  }
+
+  static makeAllGemsFall(column) {
+    let lowestStar = Bejeweled.findLowestStar(column);
+    let lowestGemAboveStar = Bejeweled.findLowestGemAboveStar(column, lowestStar);
+
+    while (lowestStar && lowestGemAboveStar) {
+      column = Bejeweled.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
+      lowestStar = Bejeweled.findLowestStar(column);
+      lowestGemAboveStar = Bejeweled.findLowestGemAboveStar(column, lowestStar);
+    }
+    return column;
+  }
+
+  static makeOneGemFall(column, star, gem) {
+    column[star.row].type = gem.type;
+    column[gem.row].type = '⭐️';
+
+    return column;
+  }
+
+  static findLowestStar(column) {
+    let top = 0;
+    let bottom = column.length - 1;
+
+    for (let i = bottom; i >= top; i--) {
+      if (column[i].type === '⭐️' && i !== top) {
+
+        return column[i];
+      }
+    }
+    return null;
+  }
+
+  static findLowestGemAboveStar(column, star) {
+    if (star === null) {
+      return null;
+    }
+
+    let top = 0
+    let bottom = star.row - 1;
+
+    for (let i = bottom; i >= top; i--) {
+      if (column[i].type !== '⭐️') {
+        return column[i];
+      }
+    }
+    return null;
+  }
+
   static findMatchesInArray(array) {
     let matchType = array[0].type;
     let matches = [];
