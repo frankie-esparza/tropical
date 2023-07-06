@@ -13,10 +13,7 @@ describe('Bejeweled', function () {
   // Add tests for swaps that set up combos
   // Add tests to check if there are no possible valid moves
 
-  // Todos:
-  // - add chai spies tests
-
-  const gemTypes = ['🥥', '🍓', '🥝', '🍉']; // keep this array at length 4 for tests below
+  const gemTypes = ['🥃', '🍓', '🥝', '🍉']; // keep this array at length 4 for tests below
 
   let bj;
   let grid;
