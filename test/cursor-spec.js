@@ -1,16 +1,13 @@
 const { expect } = require('chai');
-
 const Cursor = require("../classes/cursor.js");
 const Screen = require("../classes/screen.js");
 
 describe('Cursor', function () {
-
   let cursor;
 
   beforeEach(function () {
     cursor = new Cursor(3, 3);
   });
-
 
   it('initializes for a 3x3 grid', function () {
     expect(cursor.row).to.equal(0);
@@ -18,7 +15,6 @@ describe('Cursor', function () {
   });
 
   it('correctly processes down inputs', function () {
-
     cursor.down();
     expect([cursor.row, cursor.col]).to.deep.equal([1, 0]);
 
@@ -30,7 +26,6 @@ describe('Cursor', function () {
   });
 
   it('correctly processes up inputs', function () {
-
     cursor.up();
     expect([cursor.row, cursor.col]).to.deep.equal([0, 0]);
 
@@ -42,7 +37,6 @@ describe('Cursor', function () {
   });
 
   it('processes right inputs', function () {
-
     cursor.right();
     expect([cursor.row, cursor.col]).to.deep.equal([0, 1]);
 
@@ -54,7 +48,6 @@ describe('Cursor', function () {
   });
 
   it('processes left inputs', function () {
-
     cursor.left();
     expect([cursor.row, cursor.col]).to.deep.equal([0, 0]);
 
@@ -64,7 +57,4 @@ describe('Cursor', function () {
     cursor.left();
     expect([cursor.row, cursor.col]).to.deep.equal([0, 0]);
   });
-
-
-
 });

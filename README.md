@@ -1,6 +1,6 @@
 # Tropical
 Welcome to Tropical!
-Tropical is a terminal game made with Javascript & Node.js that mimics the game, Bejeweled. Tests where written used mocha, chai, & chai spies.
+Tropical is a terminal game made with Javascript & Node.js that mimics the game, Game. Tests where written used mocha, chai, & chai spies.
 
 The goal of the game is to to match three of the same item (either horizontally or vertically) by swapping items. When there's a match, the matched items disappear and new items fall in from above to fill the gaps.
 
