@@ -24,12 +24,13 @@ class Game {
     this.selectedGems = [];
     this.score = 0;
     this.scoreString = '';
-    this.gameStarted = true;
+    this.gameStarted = false;
     this.setupBoard();
     this.setupCursor();
     this.setupCommands();
     this.setupScreen();
     this.playGame();
+    this.gameStarted = true;
   }
 
   
