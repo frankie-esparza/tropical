@@ -145,6 +145,10 @@ class Screen {
     Screen.commands[key] = new Command(key, description, action);
   }
 
+  static addDirectionCommand = (direction, directionFunction, cursor) => {
+    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(cursor));
+  }
+
   static printCommands() {
     console.log('');
     for (let cmd in Screen.commands) {
