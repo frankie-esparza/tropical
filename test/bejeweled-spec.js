@@ -53,7 +53,7 @@ describe('Bejeweled', function () {
 
     bj = new Bejeweled();
     bj.grid = grid;
-    Bejeweled.boardSize = 3;
+    Bejeweled.BOARD_SIZE = 3;
 
     gem1 = { row: 0, col: 2, type: '🥝' };
     gem2 = { row: 1, col: 2, type: '🥥' };
