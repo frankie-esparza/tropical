@@ -3,7 +3,15 @@ const Cursor = require("./cursor");
 const Gem = require("./gem")
 
 class Bejeweled {
-  static boardSize = 8;
+  static BOARD_SIZE = 8;
+  static DIRECTIONS = ['up', 'down', 'left', 'right']; 
+  static WELCOME_MESSAGE = `
+  Welcome to Tropical!
+  🥥 Your goal is to match 3 or more of the same item
+  🍉 Make matches by swapping 2 items
+  🥝 Select items to swap by using the 's' key
+  🍓 Use the arrow keys to move around the board
+  `;
 
   constructor() {
     this.grid = [];
@@ -12,32 +20,24 @@ class Bejeweled {
     this.scoreString = '';
     this.gameStarted = false;
 
-    this.cursor = new Cursor(Bejeweled.boardSize, Bejeweled.boardSize);
+    // cursor 
+    this.cursor = new Cursor(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
     this.cursor.setBackgroundColor();
 
-    Screen.initialize(Bejeweled.boardSize, Bejeweled.boardSize);
+    // screen
+    Screen.initialize(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
     Screen.setGridlines(false);
 
-    // set up board
+    // board
     this.fillBoardWithRandomGems();
     this.dealWithMatches();
     this.gameStarted = true;
 
-    // set up commands
-    this.addDirectionCommand('up', this.cursor.up);
-    this.addDirectionCommand('down', this.cursor.down);
-    this.addDirectionCommand('left', this.cursor.left);
-    this.addDirectionCommand('right', this.cursor.right);
+    // commands
+    Bejeweled.DIRECTIONS.forEach(dir => this.addDirectionCommand(dir, this.cursor[dir]) );
     Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
     Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
-
-    let welcomeStrings = [
-      '🥥🍓🥝🍉 Welcome to Bejeweled! 🥥🍓🥝🍉\n',
-      '* The goal of the game is to make matches of at least 3 gems of the same type.',
-      '* Make a match by selecting 2 gems that when swapped, create at least 1 match.',
-      '* Press one of the commands below to start playing.'];
-
-    welcomeStrings.forEach(string => console.log(string));
+    console.log(Bejeweled.WELCOME_MESSAGE)
     Screen.printCommands();
   }
 
@@ -154,9 +154,9 @@ class Bejeweled {
   }
 
   fillBoardWithRandomGems() {
-    for (let r = 0; r < Bejeweled.boardSize; r++) {
+    for (let r = 0; r < Bejeweled.BOARD_SIZE; r++) {
       let row = [];
-      for (let c = 0; c < Bejeweled.boardSize; c++) {
+      for (let c = 0; c < Bejeweled.BOARD_SIZE; c++) {
         let gemType = Gem.getRandomGemType();
         row.push(new Gem(r, c, gemType));
       }
@@ -187,7 +187,7 @@ class Bejeweled {
     let rows = this.grid;
     let cols = [];
 
-    for (let col = 0; col < Bejeweled.boardSize; col++) {
+    for (let col = 0; col < Bejeweled.BOARD_SIZE; col++) {
       let column = [];
       rows.forEach(row => column.push(row[col]));
       cols.push(column);
