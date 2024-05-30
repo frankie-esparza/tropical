@@ -24,6 +24,10 @@ class Screen {
   static keypressCallback = null;
   static initialized = false;
 
+
+  // ---------------------
+  // INITIALIZE SCREEN
+  // ----------------------
   static initialize(numRows, numCols) {
     Screen.numRows = numRows;
     Screen.numCols = numCols;
@@ -44,18 +48,18 @@ class Screen {
     Screen.waitForInput();
   }
 
-  static setGridlines(gridLines) {
-    Screen.gridLines = gridLines;
-    Screen.render();
-  }
-
-  static printCommands() {
-    console.log('');
-    for (let cmd in Screen.commands) {
-      let description = Screen.commands[cmd].description;
-      console.log(`  ${cmd} - ${description}`);
+  
+  // ----------------------
+  // GAMEPLAY
+  // ----------------------
+  static updateScreen(grid) {
+    for (let col = 0; col < Screen.numCols; col++) {
+      for (let row = 0; row < Screen.numRows; row++) {
+        let el = grid[row][col];
+        Screen.setGrid(el.row, el.col, el.type);
+      }
     }
-    console.log('');
+    Screen.render();
   }
 
   static waitForInput() {
@@ -77,27 +81,10 @@ class Screen {
     process.stdin.resume();
   }
 
-  static setGrid(row, col, char) {
-    if (!Screen.initialized) return;
-    Screen.grid[row][col] = char;
-  }
 
-  static addCommand(key, description, action) {
-    if (key === 'q') {
-      throw new Error("you cannot overwrite 'q'");
-    }
-    Screen.commands[key] = new Command(key, description, action);
-  }
-
-  static setQuitMessage(quitMessage) {
-    Screen.quitMessage = quitMessage;
-  }
-
-  static quit(showMessage = true) {
-    if (showMessage) console.log(Screen.quitMessage);
-    process.exit(1);
-  }
-
+  // ----------------------
+  // GAMEPLAY HELPERS
+  // ----------------------
   static render() {
     if (!Screen.initialized) return;
     const spacer = new Array(Screen.spacerCount).fill(' ').join('');
@@ -127,7 +114,6 @@ class Screen {
         horizontalGridLine.push(`\x1b[0m${Screen.borderChar}`);
         console.log(horizontalGridLine.join(''));
       }
-      // console.log(rowCopy);
       rowCopy.unshift(`${Screen.borderChar}`);
       rowCopy.push(`${Screen.borderChar}`);
       console.log(rowCopy.join(''));
@@ -138,24 +124,34 @@ class Screen {
     console.log(Screen.message);
   }
 
-  static setTextColor(row, col, color) {
+  static setGrid(row, col, char) {
     if (!Screen.initialized) return;
-    const colorCodes = {
-      black: '\x1b[30m',
-      red: '\x1b[31m',
-      green: '\x1b[32m',
-      yellow: '\x1b[33m',
-      blue: '\x1b[34m',
-      magenta: '\x1b[35m',
-      cyan: '\x1b[36m',
-      white: '\x1b[37m',
-    }
+    Screen.grid[row][col] = char;
+  }
 
-    let code = colorCodes[color];
-    if (!code) {
-      throw new Error("Invalid color");
+  static quit(showMessage = true) {
+    if (showMessage) console.log(Screen.quitMessage);
+    process.exit(1);
+  }
+
+
+  // ----------------------
+  // SETUP HELPERS
+  // ----------------------
+  static addCommand(key, description, action) {
+    if (key === 'q') {
+      throw new Error("you cannot overwrite 'q'");
     }
-    Screen.textColors[row][col] = code;
+    Screen.commands[key] = new Command(key, description, action);
+  }
+
+  static printCommands() {
+    console.log('');
+    for (let cmd in Screen.commands) {
+      let description = Screen.commands[cmd].description;
+      console.log(`  ${cmd} - ${description}`);
+    }
+    console.log('');
   }
 
   static setBackgroundColor(row, col, color) {
@@ -181,12 +177,41 @@ class Screen {
     Screen.backgroundColors[row][col] = code;
   }
 
-  static setMessage(msg) {
-    Screen.message = msg;
+  static setGridlines(gridLines) {
+    Screen.gridLines = gridLines;
+    Screen.render();
   }
 
   static setKeypressCallback(keypressCallback) {
     Screen.keypressCallback = keypressCallback;
+  }
+
+  static setMessage(msg) {
+    Screen.message = msg;
+  }
+
+  static setQuitMessage(quitMessage) {
+    Screen.quitMessage = quitMessage;
+  }
+
+  static setTextColor(row, col, color) {
+    if (!Screen.initialized) return;
+    const colorCodes = {
+      black: '\x1b[30m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+    }
+
+    let code = colorCodes[color];
+    if (!code) {
+      throw new Error("Invalid color");
+    }
+    Screen.textColors[row][col] = code;
   }
 }
 

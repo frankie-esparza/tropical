@@ -1,8 +1,8 @@
 const { expect } = require('chai');
 const chai = require('chai');
 const spies = require('chai-spies');
-const Bejeweled = require("../class/bejeweled.js");
-const Gem = require("../class/gem.js");
+const Bejeweled = require("../classes/bejeweled.js");
+const Gem = require("../classes/gem.js");
 chai.use(spies);
 
 

@@ -50,24 +50,13 @@ class Bejeweled {
       this.matches = this.findMatches.call(this);
     }
 
-    this.updateScreen();
+    Screen.updateScreen(this.grid);
     Screen.render();
     console.log(`SCORE: ${this.score}`);
     console.log(`GEMS COLLECTED: ${this.scoreString}\n`);
   }
 
-  updateScreen() {
-    let numRows = this.grid.length;
-    let numCols = this.grid[0].length;
-
-    for (let col = 0; col < numCols; col++) {
-      for (let row = 0; row < numRows; row++) {
-        let el = this.grid[row][col];
-        Screen.setGrid(el.row, el.col, el.type);
-      }
-    }
-    Screen.render();
-  }
+  
 
   findMatches() {
     let rowsAndCols = this.getRowsAndCols();
@@ -99,7 +88,7 @@ class Bejeweled {
       });
     });
 
-    this.updateScreen();
+    Screen.updateScreen(this.grid);
     Screen.render()
   }
 
@@ -121,7 +110,7 @@ class Bejeweled {
     this.grid[gem1.row][gem1.col].type = gem2Type;
     this.grid[gem2.row][gem2.col].type = gem1Type;
 
-    this.updateScreen();
+    Screen.updateScreen(this.grid);
 
     this.selectedGems = [];
   }

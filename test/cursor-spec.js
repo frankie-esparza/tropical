@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 
-const Cursor = require("../class/cursor.js");
-const Screen = require("../class/screen.js");
+const Cursor = require("../classes/cursor.js");
+const Screen = require("../classes/screen.js");
 
 describe('Cursor', function () {
 
