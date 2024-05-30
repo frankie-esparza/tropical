@@ -41,6 +41,9 @@ class Bejeweled {
     Screen.printCommands();
   }
 
+  // ----------------------
+  // GAMEPLAY
+  // ----------------------
   dealWithMatches() {
     this.matches = this.findMatches();
     while (this.matches.length > 0) {
@@ -54,6 +57,51 @@ class Bejeweled {
     console.log(`GEMS COLLECTED: ${this.scoreString}\n`);
   }
 
+
+  // ----------------------
+  // USER ACTIONS 
+  // ----------------------
+  selectGem() {
+    let gem = this.grid[this.cursor.row][this.cursor.col];
+
+    if (this.selectedGems.length < 2) this.selectedGems.push(gem);
+
+    if (this.selectedGems.length === 2) {
+      let gem1 = this.selectedGems[0];
+      let gem2 = this.selectedGems[1];
+
+      this.swapGems();
+      let matches = this.findMatches();
+
+      if (matches.length > 0) {
+        console.log('⭐️⭐️⭐️ Nice! You found a match!');
+        setTimeout(this.starMatches.bind(this), 1000);
+        setTimeout(this.dealWithMatches.bind(this), 3000);
+      } else {
+        console.log("❌ That swap doesn't result in a match, please try again.");
+        this.selectedGems = [gem1, gem2];
+        setTimeout(this.swapGems.bind(this), 3000);
+      }
+    }
+  }
+  
+  swapGems() {
+    let gem1 = this.selectedGems[0];
+    let gem2 = this.selectedGems[1];
+    let gem1Type = gem1.type;
+    let gem2Type = gem2.type;
+
+    this.grid[gem1.row][gem1.col].type = gem2Type;
+    this.grid[gem2.row][gem2.col].type = gem1Type;
+
+    Screen.updateScreen(this.grid);
+    this.selectedGems = [];
+  }
+
+
+  // ----------------------
+  // MATCH HELPERS 
+  // ---------------------
   findMatches() {
     let rowsAndCols = this.getRowsAndCols();
     let matches = [];
@@ -62,6 +110,26 @@ class Bejeweled {
       let matchesInArray = Bejeweled.findMatchesInArray(rowOrCol);
       matchesInArray.forEach(match => matches.push(match));
     });
+    return matches;
+  }
+
+  static findMatchesInArray(array) {
+    let matchType = array[0].type;
+    let matches = [];
+    let match = [];
+
+    for (let i = 0; i < array.length; i++) {
+      let el = array[i];
+      if (el.type === matchType) {
+        match.push(el);
+      } else {
+        matchType = el.type;
+        if (match.length >= 3) matches.push(match);
+        match = [el];
+      }
+    }
+
+    if (match.length >= 3) matches.push(match);
     return matches;
   }
 
@@ -91,43 +159,11 @@ class Bejeweled {
     });
   }
 
-  swapGems() {
-    let gem1 = this.selectedGems[0];
-    let gem2 = this.selectedGems[1];
-    let gem1Type = gem1.type;
-    let gem2Type = gem2.type;
 
-    this.grid[gem1.row][gem1.col].type = gem2Type;
-    this.grid[gem2.row][gem2.col].type = gem1Type;
-
-    Screen.updateScreen(this.grid);
-    this.selectedGems = [];
-  }
-
-  selectGem() {
-    let gem = this.grid[this.cursor.row][this.cursor.col];
-
-    if (this.selectedGems.length < 2) this.selectedGems.push(gem);
-
-    if (this.selectedGems.length === 2) {
-      let gem1 = this.selectedGems[0];
-      let gem2 = this.selectedGems[1];
-
-      this.swapGems();
-      let matches = this.findMatches();
-
-      if (matches.length > 0) {
-        console.log('⭐️⭐️⭐️ Nice! You found a match!');
-        setTimeout(this.starMatches.bind(this), 1000);
-        setTimeout(this.dealWithMatches.bind(this), 3000);
-      } else {
-        console.log("❌ That swap doesn't result in a match, please try again.");
-        this.selectedGems = [gem1, gem2];
-        setTimeout(this.swapGems.bind(this), 3000);
-      }
-    }
-  }
-
+  // ----------------------
+  // FALLING GEMS HELPERS 
+  // i.e. refilling gems on the board once a match is made
+  // ---------------------
   fillBoardWithRandomGems() {
     for (let r = 0; r < Bejeweled.BOARD_SIZE; r++) {
       let row = [];
@@ -137,40 +173,6 @@ class Bejeweled {
       }
       this.grid.push(row);
     }
-  }
-
-  getColumns() {
-    let numRows = this.grid.length;
-    let numCols = this.grid[0].length;
-    let columns = [];
-
-    for (let col = 0; col < numCols; col++) {
-      let column = [];
-
-      for (let row = 0; row < numRows; row++) {
-        column.push(this.grid[row][col]);
-      }
-      columns.push(column);
-    }
-    return columns;
-  }
-
-  getRowsAndCols() {
-    let rows = this.grid;
-    let cols = [];
-
-    for (let col = 0; col < Bejeweled.BOARD_SIZE; col++) {
-      let column = [];
-      rows.forEach(row => column.push(row[col]));
-      cols.push(column);
-    }
-
-    let rowsAndCols = [...rows, ...cols];
-    return rowsAndCols;
-  }
-
-  addDirectionCommand = (direction, directionFunction) => {
-    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
   }
 
   static addRandomGemsAtTop(column) {
@@ -220,26 +222,50 @@ class Bejeweled {
       }
       return null;
   }
-  
-  static findMatchesInArray(array) {
-      let matchType = array[0].type;
-      let matches = [];
-      let match = [];
-  
-      for (let i = 0; i < array.length; i++) {
-        let el = array[i];
-        if (el.type === matchType) {
-          match.push(el);
-        } else {
-          matchType = el.type;
-          if (match.length >= 3) matches.push(match);
-          match = [el];
-        }
+
+
+  // ----------------------
+  // GRID HELPERS 
+  // ---------------------
+  getColumns() {
+    let numRows = this.grid.length;
+    let numCols = this.grid[0].length;
+    let columns = [];
+
+    for (let col = 0; col < numCols; col++) {
+      let column = [];
+
+      for (let row = 0; row < numRows; row++) {
+        column.push(this.grid[row][col]);
       }
-  
-      if (match.length >= 3) matches.push(match);
-      return matches;
+      columns.push(column);
+    }
+    return columns;
   }
+
+  getRowsAndCols() {
+    let rows = this.grid;
+    let cols = [];
+
+    for (let col = 0; col < Bejeweled.BOARD_SIZE; col++) {
+      let column = [];
+      rows.forEach(row => column.push(row[col]));
+      cols.push(column);
+    }
+
+    let rowsAndCols = [...rows, ...cols];
+    return rowsAndCols;
+  }
+
+
+  // ----------------------
+  // OTHER
+  // ---------------------
+  addDirectionCommand = (direction, directionFunction) => {
+    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
+  }
+  
+
 }
   
   module.exports = Bejeweled;  
