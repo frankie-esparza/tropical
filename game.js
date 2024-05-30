@@ -1,5 +1,2 @@
-
-
-const Bejeweled = require("./classes/bejeweled");
-
-bejeweled = new Bejeweled();
+const Game = require("./classes/game");
+let game = new Game();

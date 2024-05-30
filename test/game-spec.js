@@ -1,12 +1,12 @@
 const { expect } = require('chai');
 const chai = require('chai');
 const spies = require('chai-spies');
-const Bejeweled = require("../classes/bejeweled.js");
+const Game = require("../classes/game.js");
 const Gem = require("../classes/gem.js");
 chai.use(spies);
 
 
-describe('Bejeweled', function () {
+describe('Game', function () {
   let bj;
   let grid;
   let gridAfterSwap;
@@ -51,9 +51,9 @@ describe('Bejeweled', function () {
 
     rowWith0Matches = grid[0];
 
-    bj = new Bejeweled();
+    bj = new Game();
     bj.grid = grid;
-    Bejeweled.BOARD_SIZE = 3;
+    Game.BOARD_SIZE = 3;
 
     gem1 = { row: 0, col: 2, type: '🥝' };
     gem2 = { row: 1, col: 2, type: '🥥' };
@@ -152,19 +152,19 @@ describe('Bejeweled', function () {
 
   describe('findMatchesInArray(array)', function () {
     it('does not find match if array contains 0 matches', function () {
-      expect(Bejeweled.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
+      expect(Game.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
     });
 
     it('finds match if array contains 1 match', function () {
-      expect(Bejeweled.findMatchesInArray(match1)).to.deep.equal(matches1);
+      expect(Game.findMatchesInArray(match1)).to.deep.equal(matches1);
     });
 
     it('finds match if array contains 2 matches', function () {
-      expect(Bejeweled.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
+      expect(Game.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
     });
 
     it('finds match if array contains a match of 2, and then 1 match', function () {
-      expect(Bejeweled.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
+      expect(Game.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
     });
   });
 
@@ -188,7 +188,7 @@ describe('Bejeweled', function () {
 //*****************
 // CLEAR MATCHES
 //*****************
-describe('Bejeweled', function () {
+describe('Game', function () {
   let col1;
   let col2;
   let col3;
@@ -333,32 +333,32 @@ describe('Bejeweled', function () {
 
   describe('findLowestStar(column)', function () {
     it('does NOT find lowest star when one is NOT present', function () {
-      expect(Bejeweled.findLowestStar(col1)).to.be.deep.equal(lowestStar1);
+      expect(Game.findLowestStar(col1)).to.be.deep.equal(lowestStar1);
     });
     it('finds lowest star when one is present', function () {
-      expect(Bejeweled.findLowestStar(col2)).to.be.deep.equal(lowestStar2);
-      expect(Bejeweled.findLowestStar(col3)).to.be.deep.equal(lowestStar3);
-      expect(Bejeweled.findLowestStar(col4)).to.be.deep.equal(lowestStar4);
+      expect(Game.findLowestStar(col2)).to.be.deep.equal(lowestStar2);
+      expect(Game.findLowestStar(col3)).to.be.deep.equal(lowestStar3);
+      expect(Game.findLowestStar(col4)).to.be.deep.equal(lowestStar4);
     });
   });
 
   describe('findLowestGemAboveStar(column, star)', function () {
     it('does NOT find lowest gem above star when one is NOT present', function () {
-      expect(Bejeweled.findLowestGemAboveStar(col1, lowestStar1)).to.be.deep.equal(lowestGemAboveStar1);
-      expect(Bejeweled.findLowestGemAboveStar(col2, lowestStar2)).to.be.deep.equal(lowestGemAboveStar2);
+      expect(Game.findLowestGemAboveStar(col1, lowestStar1)).to.be.deep.equal(lowestGemAboveStar1);
+      expect(Game.findLowestGemAboveStar(col2, lowestStar2)).to.be.deep.equal(lowestGemAboveStar2);
     });
 
     it('finds lowest gem above star when one is present', function () {
-      expect(Bejeweled.findLowestGemAboveStar(col3, lowestStar3)).to.be.deep.equal(lowestGemAboveStar3);
-      expect(Bejeweled.findLowestGemAboveStar(col4, lowestStar4)).to.be.deep.equal(lowestGemAboveStar4);
+      expect(Game.findLowestGemAboveStar(col3, lowestStar3)).to.be.deep.equal(lowestGemAboveStar3);
+      expect(Game.findLowestGemAboveStar(col4, lowestStar4)).to.be.deep.equal(lowestGemAboveStar4);
 
     });
   });
 
   describe('makeOneGemFall(column, star, gem)', function () {
     it('makes 1 gem fall when theres a falling gem present', function () {
-      expect(Bejeweled.makeOneGemFall(col3, lowestStar3, lowestGemAboveStar3)).to.deep.equal(col3_afterFall);
-      expect(Bejeweled.makeOneGemFall(col4, lowestStar4, lowestGemAboveStar4)).to.deep.equal(col4_afterFall);
+      expect(Game.makeOneGemFall(col3, lowestStar3, lowestGemAboveStar3)).to.deep.equal(col3_afterFall);
+      expect(Game.makeOneGemFall(col4, lowestStar4, lowestGemAboveStar4)).to.deep.equal(col4_afterFall);
     });
   });
 
@@ -366,10 +366,10 @@ describe('Bejeweled', function () {
     it('should call getRandomGemType() for each star', function () {
       let spy = chai.spy.on(Gem, 'getRandomGemType');
 
-      Bejeweled.addRandomGemsAtTop(col3_afterAllGemsFall);
+      Game.addRandomGemsAtTop(col3_afterAllGemsFall);
       expect(spy).to.have.been.called.exactly(numStars3);
 
-      Bejeweled.addRandomGemsAtTop(col1);
+      Game.addRandomGemsAtTop(col1);
       expect(spy).to.have.been.called.exactly(numStars3); // since col1 has no stars, num times called should stay same
     });
   });
@@ -379,8 +379,8 @@ describe('Bejeweled', function () {
   // ******************
   describe('makeAllGemsFall(column)', function () {
     it('makes all gems fall when theres a falling gems present', function () {
-      expect(Bejeweled.makeAllGemsFall(col3)).to.deep.equal(col3_afterAllGemsFall);
-      expect(Bejeweled.makeAllGemsFall(col4)).to.deep.equal(col4_afterAllGemsFall);
+      expect(Game.makeAllGemsFall(col3)).to.deep.equal(col3_afterAllGemsFall);
+      expect(Game.makeAllGemsFall(col4)).to.deep.equal(col4_afterAllGemsFall);
     });
   });
 
@@ -391,7 +391,7 @@ describe('Bejeweled', function () {
 
 
     beforeEach(function () {
-      bj = new Bejeweled();
+      bj = new Game();
 
       grid_beforeStar = [
         [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
@@ -421,7 +421,7 @@ describe('Bejeweled', function () {
 
 
     beforeEach(function () {
-      bj = new Bejeweled();
+      bj = new Game();
 
       grid_beforeStar = [
         [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
@@ -440,8 +440,8 @@ describe('Bejeweled', function () {
     it('should call makeAllGemsFall() & addRandomGemsAtTop() once for each column', function () {
       bj.grid = grid_afterStar;
 
-      let spy2 = chai.spy.on(Bejeweled, 'makeAllGemsFall');
-      let spy3 = chai.spy.on(Bejeweled, 'addRandomGemsAtTop');
+      let spy2 = chai.spy.on(Game, 'makeAllGemsFall');
+      let spy3 = chai.spy.on(Game, 'addRandomGemsAtTop');
 
       bj.clearMatches();
 

@@ -2,10 +2,16 @@ const Screen = require("./screen");
 const Cursor = require("./cursor");
 const Gem = require("./gem")
 
-class Bejeweled {
+class Game {
   static BOARD_SIZE = 8;
+  static DELAY_DEFAULT = 3000;
+  static DELAY_AFTER_STARS_APPEAR = 1000;
+  static MIN_MATCH_LENGTH = 3;
+  static MATCH_SYMBOL = '⭐️';
   static DIRECTIONS = ['up', 'down', 'left', 'right']; 
-  static WELCOME_MESSAGE = `
+  static MESSAGE_MATCH_FOUND = '⭐️⭐️⭐️ Nice! You found a match!';
+  static MESSAGE_INVALID_SWAP = "❌ That swap doesn't result in a match, please try again.";
+  static MESSAGE_WELCOME = `
   Welcome to Tropical!
   🥥 Your goal is to match 3 or more of the same item
   🍉 Make matches by swapping 2 items
@@ -19,12 +25,14 @@ class Bejeweled {
     this.score = 0;
     this.scoreString = '';
     this.gameStarted = true;
-    this.setupScreen();
     this.setupBoard();
     this.setupCursor();
     this.setupCommands();
+    this.setupScreen();
+    this.playGame();
   }
 
+  
   // ----------------------
   // PLAY GAME
   // ----------------------
@@ -50,9 +58,9 @@ class Bejeweled {
   selectGem() {
     let gem = this.grid[this.cursor.row][this.cursor.col];
 
-    if (this.selectedGems.length < 2) this.selectedGems.push(gem);
+    if (this.selectedGems.length < Game.MIN_MATCH_LENGTH - 1) this.selectedGems.push(gem);
 
-    if (this.selectedGems.length === 2) {
+    if (this.selectedGems.length === Game.MIN_MATCH_LENGTH - 1) {
       let gem1 = this.selectedGems[0];
       let gem2 = this.selectedGems[1];
 
@@ -60,13 +68,13 @@ class Bejeweled {
       let matches = this.findMatches();
 
       if (matches.length > 0) {
-        console.log('⭐️⭐️⭐️ Nice! You found a match!');
-        setTimeout(this.starMatches.bind(this), 1000);
-        setTimeout(this.playGame.bind(this), 3000);
+        console.log(Game.MESSAGE_MATCH_FOUND);
+        setTimeout(this.starMatches.bind(this), Game.DELAY_AFTER_STARS_APPEAR);
+        setTimeout(this.playGame.bind(this), Game.DELAY_DEFAULT);
       } else {
-        console.log("❌ That swap doesn't result in a match, please try again.");
+        console.log(Game.MESSAGE_INVALID_SWAP);
         this.selectedGems = [gem1, gem2];
-        setTimeout(this.swapGems.bind(this), 3000);
+        setTimeout(this.swapGems.bind(this), Game.DELAY_DEFAULT);
       }
     }
   }
@@ -93,7 +101,7 @@ class Bejeweled {
     let matches = [];
 
     rowsAndCols.forEach(rowOrCol => {
-      let matchesInArray = Bejeweled.findMatchesInArray(rowOrCol);
+      let matchesInArray = Game.findMatchesInArray(rowOrCol);
       matchesInArray.forEach(match => matches.push(match));
     });
     return matches;
@@ -110,12 +118,12 @@ class Bejeweled {
         match.push(el);
       } else {
         matchType = el.type;
-        if (match.length >= 3) matches.push(match);
+        if (match.length >= Game.MIN_MATCH_LENGTH) matches.push(match);
         match = [el];
       }
     }
 
-    if (match.length >= 3) matches.push(match);
+    if (match.length >= Game.MIN_MATCH_LENGTH) matches.push(match);
     return matches;
   }
 
@@ -124,8 +132,8 @@ class Bejeweled {
     matches.forEach(match => {
       match.forEach(el => {
         let gemType = el.type;
-        el.type = '⭐️';
-        if (this.gameStarted && gemType !== '⭐️') {
+        el.type = Game.MATCH_SYMBOL;
+        if (this.gameStarted && gemType !== Game.MATCH_SYMBOL) {
           this.score++;
           this.scoreString += gemType;
         }
@@ -140,8 +148,8 @@ class Bejeweled {
     let columns = this.getColumns();
 
     columns.forEach(column => {
-      Bejeweled.makeAllGemsFall(column);
-      Bejeweled.addRandomGemsAtTop(column);
+      Game.makeAllGemsFall(column);
+      Game.addRandomGemsAtTop(column);
     });
   }
 
@@ -150,41 +158,30 @@ class Bejeweled {
   // FALLING GEMS HELPERS 
   // i.e. refilling gems on the board once a match is made
   // ---------------------
-  fillBoardWithRandomGems() {
-    for (let r = 0; r < Bejeweled.BOARD_SIZE; r++) {
-      let row = [];
-      for (let c = 0; c < Bejeweled.BOARD_SIZE; c++) {
-        let gemType = Gem.getRandomGemType();
-        row.push(new Gem(r, c, gemType));
-      }
-      this.grid.push(row);
-    }
-  }
-
   static addRandomGemsAtTop(column) {
     for (let row = 0; row < column.length - 1; row++) {
       let el = column[row];
-      if (el.type === '⭐️') el.type = Gem.getRandomGemType();
+      if (el.type === Game.MATCH_SYMBOL) el.type = Gem.getRandomGemType();
       else break;
       }
       return column;
   }
   
   static makeAllGemsFall(column) {
-      let lowestStar = Bejeweled.findLowestStar(column);
-      let lowestGemAboveStar = Bejeweled.findLowestGemAboveStar(column, lowestStar);
+      let lowestStar = Game.findLowestStar(column);
+      let lowestGemAboveStar = Game.findLowestGemAboveStar(column, lowestStar);
   
       while (lowestStar && lowestGemAboveStar) {
-        column = Bejeweled.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
-        lowestStar = Bejeweled.findLowestStar(column);
-        lowestGemAboveStar = Bejeweled.findLowestGemAboveStar(column, lowestStar);
+        column = Game.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
+        lowestStar = Game.findLowestStar(column);
+        lowestGemAboveStar = Game.findLowestGemAboveStar(column, lowestStar);
       }
       return column;
   }
   
   static makeOneGemFall(column, star, gem) {
       column[star.row].type = gem.type;
-      column[gem.row].type = '⭐️';
+      column[gem.row].type = Game.MATCH_SYMBOL;
       return column;
   }
   
@@ -193,7 +190,7 @@ class Bejeweled {
       let bottom = column.length - 1;
   
       for (let i = bottom; i >= top; i--) {
-        if (column[i].type === '⭐️' && i !== top) return column[i];
+        if (column[i].type === Game.MATCH_SYMBOL && i !== top) return column[i];
       }
       return null;
   }
@@ -204,7 +201,7 @@ class Bejeweled {
       let bottom = star.row - 1;
   
       for (let i = bottom; i >= top; i--) {
-        if (column[i].type !== '⭐️') return column[i];
+        if (column[i].type !== Game.MATCH_SYMBOL) return column[i];
       }
       return null;
   }
@@ -212,27 +209,33 @@ class Bejeweled {
   // ----------------------
   // SETUP HELPERS
   // ---------------------
+  setupBoard(){
+    for (let r = 0; r < Game.BOARD_SIZE; r++) {
+      let row = [];
+      for (let c = 0; c < Game.BOARD_SIZE; c++) {
+        let gemType = Gem.getRandomGemType();
+        row.push(new Gem(r, c, gemType));
+      }
+      this.grid.push(row);
+    }
+  }
+
+  setupCommands() {
+    Game.DIRECTIONS.forEach(dir => Screen.addDirectionCommand(dir, this.cursor[dir], this.cursor) );
+    Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
+    Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
+    console.log(Game.MESSAGE_WELCOME)
+    Screen.printCommands();
+  }
+
   setupCursor(){
-    this.cursor = new Cursor(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
+    this.cursor = new Cursor(Game.BOARD_SIZE, Game.BOARD_SIZE);
     this.cursor.setBackgroundColor();
   }
 
   setupScreen(){
-    Screen.initialize(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
+    Screen.initialize(Game.BOARD_SIZE, Game.BOARD_SIZE);
     Screen.setGridlines(false);
-  }
-
-  setupBoard(){
-    this.fillBoardWithRandomGems();
-    this.playGame();
-  }
-
-  setupCommands() {
-    Bejeweled.DIRECTIONS.forEach(dir => Screen.addDirectionCommand(dir, this.cursor[dir], this.cursor) );
-    Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
-    Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
-    console.log(Bejeweled.WELCOME_MESSAGE)
-    Screen.printCommands();
   }
 
 
@@ -259,7 +262,7 @@ class Bejeweled {
     let rows = this.grid;
     let cols = [];
 
-    for (let col = 0; col < Bejeweled.BOARD_SIZE; col++) {
+    for (let col = 0; col < Game.BOARD_SIZE; col++) {
       let column = [];
       rows.forEach(row => column.push(row[col]));
       cols.push(column);
@@ -270,4 +273,4 @@ class Bejeweled {
   }
 }
   
-  module.exports = Bejeweled;  
+  module.exports = Game;  
