@@ -9,44 +9,11 @@ class MatchHandler{
     for (let col = 0; col < columns.length; col++) {
       let column = columns[col];
       let colAfterFall = MatchHandler.makeAllGemsFall(column);
-      let afterReplace = MatchHandler.addRandomGemsAtTop(colAfterFall);
-      columns[col] = afterReplace;
+      let colAfterGemsRefilled = MatchHandler.addRandomGemsAtTop(colAfterFall);
+      columns[col] = colAfterGemsRefilled;
     }
     let newGrid = MatchHandler.getGridFromColumns(columns);
     return newGrid;
-  }
-
-  // ---------------
-  // GRID HELPERS
-  // ---------------
-  static getGridFromColumns(columns) {
-    let numCols = columns.length;
-    let numRows = columns[0].length;
-    let rows = [];
-
-    for (let r = 0; r < numRows; r++) {
-      let row = [];
-      for (let c = 0; c < numCols; c++) {
-        row.push(columns[c][r]);
-      }
-      rows.push(row);
-    }
-    return rows;
-  }
-
-  static getColumnsFromGrid(grid) {
-    let numRows = grid.length;
-    let numCols = grid[0].length;
-    let columns = [];
-
-    for (let col = 0; col < numCols; col++) {
-      let column = [];
-      for (let row = 0; row < numRows; row++) {
-        column.push(grid[row][col]);
-      }
-      columns.push(column);
-    }
-    return columns;
   }
 
   static addRandomGemsAtTop(column) {
@@ -58,28 +25,17 @@ class MatchHandler{
       return column;
   }
   
-  static makeAllGemsFall(column) {
-      let lowestStar = MatchHandler.findLowestStar(column);
-      let lowestGemAboveStar = MatchHandler.findLowestGemAboveStar(column, lowestStar);
-  
-      while (lowestStar && lowestGemAboveStar) {
-        column = MatchHandler.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
-        lowestStar = MatchHandler.findLowestStar(column);
-        lowestGemAboveStar = MatchHandler.findLowestGemAboveStar(column, lowestStar);
-      }
-      return column;
-  }
-  
-  static makeOneGemFall(column, star, gem) {
-      column[star.row].type = gem.type;
-      column[gem.row].type = MatchHandler.MATCH_SYMBOL;
-      return column;
-  }
-  
+  // ------------------------------------------------------------------------------
+  // FIND LOWEST STARS
+  // 
+  // * stars indicate where matches were made
+  // * finding the "lowest star" is used to determine how far down gems will fall
+  // * finding the "lowest gem" above the "lowest star" determine which gem will 
+  //   be the first to start falling
+  // ------------------------------------------------------------------------------
   static findLowestStar(column) {
       let top = 0;
       let bottom = column.length - 1;
-  
       for (let i = bottom; i >= top; i--) {
         if (column[i].type === MatchHandler.MATCH_SYMBOL && i !== top) return column[i];
       }
@@ -87,14 +43,59 @@ class MatchHandler{
   }
   
   static findLowestGemAboveStar(column, star) {
-      if (star === null) return null;
+      if (star === null) return null; 
       let top = 0
       let bottom = star.row - 1;
-  
       for (let i = bottom; i >= top; i--) {
         if (column[i].type !== MatchHandler.MATCH_SYMBOL) return column[i];
       }
       return null;
+  }
+
+  // ----------------
+  // MAKE GEMS FALL
+  // ----------------
+  static makeAllGemsFall(column) {
+    let lowestStar = MatchHandler.findLowestStar(column);
+    let lowestGemAboveStar = MatchHandler.findLowestGemAboveStar(column, lowestStar);
+
+    while (lowestStar && lowestGemAboveStar) {
+      column = MatchHandler.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
+      lowestStar = MatchHandler.findLowestStar(column);
+      lowestGemAboveStar = MatchHandler.findLowestGemAboveStar(column, lowestStar);
+    }
+    return column;
+  }
+
+  static makeOneGemFall(column, star, gem) {
+    column[star.row].type = gem.type;
+    column[gem.row].type = MatchHandler.MATCH_SYMBOL;
+    return column;
+}
+
+  // -------------------------------------------
+  // CONVERT BETWEEN COLUMNS & GRID (I.E. ROWS)
+  // -------------------------------------------
+  static getGridFromColumns(columns) {
+    return this.transpose(columns);
+  }
+  
+  static getColumnsFromGrid(rows) {
+    return this.transpose(rows);
+  }
+
+  static transpose(matrix) {
+    const numRows = matrix.length;
+    const numCols = matrix[0].length;
+    const transposed = [];
+    for (let col = 0; col < numCols; col++) {
+      const newRow = [];
+      for (let row = 0; row < numRows; row++) {
+        newRow.push(matrix[row][col]);
+      }
+      transposed.push(newRow);
+    }
+    return transposed;
   }
 }
 
