@@ -25,7 +25,7 @@ class Screen {
   static initialized = false;
 
 
-  // ---------------------
+  // ----------------------
   // INITIALIZE SCREEN
   // ----------------------
   static initialize(numRows, numCols) {
