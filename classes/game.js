@@ -1,6 +1,7 @@
 const Screen = require("./screen");
 const Cursor = require("./cursor");
 const Gem = require("./gem")
+const MatchHandler = require("./matchHandler")
 
 class Game {
   static BOARD_SIZE = 8;
@@ -42,7 +43,8 @@ class Game {
 
     while (this.matches.length > 0) {
       this.starMatches();
-      this.clearMatches();
+      let newGrid = MatchHandler.clearMatches(this.grid);
+      this.grid = newGrid;
       this.matches = this.findMatches.call(this);
     }
 
@@ -95,7 +97,7 @@ class Game {
 
 
   // ----------------------
-  // MATCH HELPERS 
+  // FIND & STAR MATCHES
   // ---------------------
   findMatches() {
     let rowsAndCols = this.getRowsAndCols();
@@ -145,68 +147,6 @@ class Game {
     Screen.render()
   }
 
-  clearMatches() {
-    let columns = this.getColumns();
-
-    columns.forEach(column => {
-      Game.makeAllGemsFall(column);
-      Game.addRandomGemsAtTop(column);
-    });
-  }
-
-
-  // ----------------------
-  // FALLING GEMS HELPERS 
-  // i.e. refilling gems on the board once a match is made
-  // ---------------------
-  static addRandomGemsAtTop(column) {
-    for (let row = 0; row < column.length - 1; row++) {
-      let el = column[row];
-      if (el.type === Game.MATCH_SYMBOL) el.type = Gem.getRandomGemType();
-      else break;
-      }
-      return column;
-  }
-  
-  static makeAllGemsFall(column) {
-      let lowestStar = Game.findLowestStar(column);
-      let lowestGemAboveStar = Game.findLowestGemAboveStar(column, lowestStar);
-  
-      while (lowestStar && lowestGemAboveStar) {
-        column = Game.makeOneGemFall(column, lowestStar, lowestGemAboveStar);
-        lowestStar = Game.findLowestStar(column);
-        lowestGemAboveStar = Game.findLowestGemAboveStar(column, lowestStar);
-      }
-      return column;
-  }
-  
-  static makeOneGemFall(column, star, gem) {
-      column[star.row].type = gem.type;
-      column[gem.row].type = Game.MATCH_SYMBOL;
-      return column;
-  }
-  
-  static findLowestStar(column) {
-      let top = 0;
-      let bottom = column.length - 1;
-  
-      for (let i = bottom; i >= top; i--) {
-        if (column[i].type === Game.MATCH_SYMBOL && i !== top) return column[i];
-      }
-      return null;
-  }
-  
-  static findLowestGemAboveStar(column, star) {
-      if (star === null) return null;
-      let top = 0
-      let bottom = star.row - 1;
-  
-      for (let i = bottom; i >= top; i--) {
-        if (column[i].type !== Game.MATCH_SYMBOL) return column[i];
-      }
-      return null;
-  }
-
   // ----------------------
   // SETUP HELPERS
   // ---------------------
@@ -243,21 +183,7 @@ class Game {
   // ----------------------
   // GRID HELPERS 
   // ---------------------
-  getColumns() {
-    let numRows = this.grid.length;
-    let numCols = this.grid[0].length;
-    let columns = [];
 
-    for (let col = 0; col < numCols; col++) {
-      let column = [];
-
-      for (let row = 0; row < numRows; row++) {
-        column.push(this.grid[row][col]);
-      }
-      columns.push(column);
-    }
-    return columns;
-  }
 
   getRowsAndCols() {
     let rows = this.grid;
