@@ -18,39 +18,25 @@ class Bejeweled {
     this.selectedGems = [];
     this.score = 0;
     this.scoreString = '';
-    this.gameStarted = false;
-
-    // Cursor 
-    this.cursor = new Cursor(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
-    this.cursor.setBackgroundColor();
-
-    // Screen
-    Screen.initialize(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
-    Screen.setGridlines(false);
-
-    // Board
-    this.fillBoardWithRandomGems();
-    this.dealWithMatches();
     this.gameStarted = true;
-
-    // Commands
-    Bejeweled.DIRECTIONS.forEach(dir => this.addDirectionCommand(dir, this.cursor[dir]) );
-    Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
-    Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
-    console.log(Bejeweled.WELCOME_MESSAGE)
-    Screen.printCommands();
+    this.setupScreen();
+    this.setupBoard();
+    this.setupCursor();
+    this.setupCommands();
   }
 
   // ----------------------
-  // GAMEPLAY
+  // PLAY GAME
   // ----------------------
-  dealWithMatches() {
+  playGame() {
     this.matches = this.findMatches();
+
     while (this.matches.length > 0) {
       this.starMatches();
       this.clearMatches();
       this.matches = this.findMatches.call(this);
     }
+
     Screen.updateScreen(this.grid);
     Screen.render();
     console.log(`SCORE: ${this.score}`);
@@ -76,7 +62,7 @@ class Bejeweled {
       if (matches.length > 0) {
         console.log('⭐️⭐️⭐️ Nice! You found a match!');
         setTimeout(this.starMatches.bind(this), 1000);
-        setTimeout(this.dealWithMatches.bind(this), 3000);
+        setTimeout(this.playGame.bind(this), 3000);
       } else {
         console.log("❌ That swap doesn't result in a match, please try again.");
         this.selectedGems = [gem1, gem2];
@@ -223,6 +209,32 @@ class Bejeweled {
       return null;
   }
 
+  // ----------------------
+  // SETUP HELPERS
+  // ---------------------
+  setupCursor(){
+    this.cursor = new Cursor(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
+    this.cursor.setBackgroundColor();
+  }
+
+  setupScreen(){
+    Screen.initialize(Bejeweled.BOARD_SIZE, Bejeweled.BOARD_SIZE);
+    Screen.setGridlines(false);
+  }
+
+  setupBoard(){
+    this.fillBoardWithRandomGems();
+    this.playGame();
+  }
+
+  setupCommands() {
+    Bejeweled.DIRECTIONS.forEach(dir => Screen.addDirectionCommand(dir, this.cursor[dir], this.cursor) );
+    Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
+    Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
+    console.log(Bejeweled.WELCOME_MESSAGE)
+    Screen.printCommands();
+  }
+
 
   // ----------------------
   // GRID HELPERS 
@@ -256,16 +268,6 @@ class Bejeweled {
     let rowsAndCols = [...rows, ...cols];
     return rowsAndCols;
   }
-
-
-  // ----------------------
-  // OTHER
-  // ---------------------
-  addDirectionCommand = (direction, directionFunction) => {
-    Screen.addCommand(direction, `move cursor ${direction}`, directionFunction.bind(this.cursor));
-  }
-  
-
 }
   
   module.exports = Bejeweled;  
