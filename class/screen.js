@@ -2,34 +2,31 @@ const keypress = require('keypress');
 const Command = require('./command');
 
 class Screen {
-
+  // size 
   static numCols = 0;
   static numRows = 0;
   static grid = [];
 
+  // border
   static borderChar = " ";
   static spacerCount = 1;
-
   static gridLines = false;
 
+  // colors
   static defaultTextColor = '\x1b[37m';  // White
   static defaultBackgroundColor = '\x1b[40m';  // Black
-
   static textColors = [];
   static backgroundColors = [];
 
+  // message & commands
   static message = "";
-
   static commands = {};
-
   static keypressCallback = null;
-
   static initialized = false;
 
   static initialize(numRows, numCols) {
     Screen.numRows = numRows;
     Screen.numCols = numCols;
-
     Screen.grid = [];
     Screen.textColors = [];
     Screen.backgroundColors = [];
@@ -43,9 +40,7 @@ class Screen {
     Screen.setQuitMessage("\nThank you for playing! \nGoodbye.\n");
     const quitCmd = new Command('q', 'quit the game', Screen.quit);
     Screen.commands['q'] = quitCmd;
-
     Screen.initialized = true;
-
     Screen.waitForInput();
   }
 
@@ -55,22 +50,17 @@ class Screen {
   }
 
   static printCommands() {
-
     console.log('');
-
     for (let cmd in Screen.commands) {
       let description = Screen.commands[cmd].description;
       console.log(`  ${cmd} - ${description}`);
     }
-
     console.log('');
   }
 
   static waitForInput() {
     keypress(process.stdin);
-
     process.stdin.on('keypress', function (ch, key) {
-
       if (!key) {
         console.log("Warning: Unknown keypress");
       } else if (!Screen.commands.hasOwnProperty(key.name)) {
@@ -92,13 +82,10 @@ class Screen {
     Screen.grid[row][col] = char;
   }
 
-
   static addCommand(key, description, action) {
-
     if (key === 'q') {
       throw new Error("you cannot overwrite 'q'");
     }
-
     Screen.commands[key] = new Command(key, description, action);
   }
 
@@ -112,11 +99,8 @@ class Screen {
   }
 
   static render() {
-
     if (!Screen.initialized) return;
-
     const spacer = new Array(Screen.spacerCount).fill(' ').join('');
-
     console.clear();
 
     let borderLength = Screen.numCols * (Screen.spacerCount * 2 + 1) + 2;
@@ -126,11 +110,9 @@ class Screen {
     console.log(horizontalBorder);
 
     for (let row = 0; row < Screen.numRows; row++) {
-
       const rowCopy = [...Screen.grid[row]];
 
       for (let col = 0; col < Screen.numCols; col++) {
-
         let textColor = Screen.textColors[row][col] ? Screen.textColors[row][col] : "";
         let backgroundColor = Screen.backgroundColors[row][col] ? Screen.backgroundColors[row][col] : "";
         if (!(textColor && backgroundColor)) textColor = '\x1b[0m';
@@ -145,28 +127,19 @@ class Screen {
         horizontalGridLine.push(`\x1b[0m${Screen.borderChar}`);
         console.log(horizontalGridLine.join(''));
       }
-
       // console.log(rowCopy);
-
       rowCopy.unshift(`${Screen.borderChar}`);
       rowCopy.push(`${Screen.borderChar}`);
-
       console.log(rowCopy.join(''));
-
     }
 
     console.log(horizontalBorder);
-
     console.log("");
-
     console.log(Screen.message);
-
   }
 
   static setTextColor(row, col, color) {
-
     if (!Screen.initialized) return;
-
     const colorCodes = {
       black: '\x1b[30m',
       red: '\x1b[31m',
@@ -179,18 +152,14 @@ class Screen {
     }
 
     let code = colorCodes[color];
-
     if (!code) {
       throw new Error("Invalid color");
     }
-
     Screen.textColors[row][col] = code;
   }
 
   static setBackgroundColor(row, col, color) {
-
     if (!Screen.initialized) return;
-
     const colorCodes = {
       //background color
       blackBg: '\x1b[40m',

@@ -1,14 +1,12 @@
 const { expect } = require('chai');
-
-const chai = require('chai')
-  , spies = require('chai-spies');
+const chai = require('chai');
+const spies = require('chai-spies');
+const Bejeweled = require("../class/bejeweled.js");
+const Gem = require("../class/gem.js");
 chai.use(spies);
 
-const Bejeweled = require("../class/bejeweled.js");
 
 describe('Bejeweled', function () {
-  const gemTypes = ['🥥', '🍓', '🥝', '🍉']; // keep this array at length 4 for tests below
-
   let bj;
   let grid;
   let gridAfterSwap;
@@ -112,29 +110,13 @@ describe('Bejeweled', function () {
   // *******************
   describe('getRandomGemType()', function () {
     it('returns a random gem', function () {
-      let randomGem = Bejeweled.getRandomGemType();
-      expect(randomGem === gemTypes[0] || randomGem === gemTypes[1] || randomGem === gemTypes[2] || randomGem === gemTypes[3]).to.be.true;
-    });
-  });
-
-  describe('getGemTypeAbove(gem)', function () {
-    it('returns the gem above', function () {
-      expect(bj.getGemTypeAbove(gem2)).to.deep.equal(gem1.type);
-    });
-  });
-
-  describe('changeGemType(gem, gemType)', function () {
-    it('replace gem with new gem specified', function () {
-      let gem = gem2;
-      let gemType = '🍉';
-
-      bj.changeGemType(gem, '🍉');
-      expect(bj.grid[gem.row][gem.col].type).to.equal(gemType);
+      let randomGem = Gem.getRandomGemType();
+      expect(randomGem === Gem.GEM_TYPES[0] || randomGem === Gem.GEM_TYPES[1] || randomGem === Gem.GEM_TYPES[2] || randomGem === Gem.GEM_TYPES[3]).to.be.true;
     });
   });
 
   describe('swapGems()', function () {
-    it('swaps the gemTypes of the 2 gems specified, if swap results in match', function () {
+    it('swaps the Gem.GEM_TYPES of the 2 gems specified, if swap results in match', function () {
       bj.selectedGems = [gem1, gem2];
       bj.swapGems();
 
@@ -382,7 +364,7 @@ describe('Bejeweled', function () {
 
   describe('addRandomGemsAtTop(column)', function () {
     it('should call getRandomGemType() for each star', function () {
-      let spy = chai.spy.on(Bejeweled, 'getRandomGemType');
+      let spy = chai.spy.on(Gem, 'getRandomGemType');
 
       Bejeweled.addRandomGemsAtTop(col3_afterAllGemsFall);
       expect(spy).to.have.been.called.exactly(numStars3);
