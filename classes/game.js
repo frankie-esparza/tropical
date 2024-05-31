@@ -23,9 +23,11 @@ class Game {
   constructor() {
     this.grid = [];
     this.selectedGems = [];
+    this.matches = [];
     this.score = 0;
     this.scoreString = '';
     this.gameStarted = false;
+
     this.setupBoard();
     this.setupCursor();
     this.setupCommands();
@@ -39,12 +41,11 @@ class Game {
   // PLAY GAME
   // ----------------------
   playGame() {
-    this.matches = this.findMatches();
+    this.findMatches.call(this);
 
     while (this.matches.length > 0) {
-      this.starMatches();
-      let newGrid = MatchHandler.clearMatches(this.grid);
-      this.grid = newGrid;
+      this.findAndStarMatches();
+      this.grid = MatchHandler.clearMatches.call(this, this.grid);
       this.matches = this.findMatches.call(this);
     }
 
@@ -60,20 +61,22 @@ class Game {
   // ----------------------
   selectGem() {
     let gem = this.grid[this.cursor.row][this.cursor.col];
-
     if (this.selectedGems.length < Game.MIN_MATCH_LENGTH - 1) this.selectedGems.push(gem);
 
+    // If player selected 2 gems total, check to see if they make a match
     if (this.selectedGems.length === Game.MIN_MATCH_LENGTH - 1) {
       let gem1 = this.selectedGems[0];
       let gem2 = this.selectedGems[1];
-
       this.swapGems();
       let matches = this.findMatches();
 
+      // If there's a match
       if (matches.length > 0) {
         console.log(Game.MESSAGE_MATCH_FOUND);
-        setTimeout(this.starMatches.bind(this), Game.DELAY_AFTER_STARS_APPEAR);
+        setTimeout(this.findAndStarMatches.bind(this), Game.DELAY_AFTER_STARS_APPEAR);
         setTimeout(this.playGame.bind(this), Game.DELAY_DEFAULT);
+
+      // If there isn't a match
       } else {
         console.log(Game.MESSAGE_INVALID_SWAP);
         this.selectedGems = [gem1, gem2];
@@ -99,6 +102,35 @@ class Game {
   // ----------------------
   // FIND & STAR MATCHES
   // ---------------------
+  findAndStarMatches() {
+    let matches = this.findMatches();
+    this.starMatches(matches)
+  }
+
+  // --------------------------------------------------------
+  // STAR MATCHES 
+  // 
+  // * Show a '⭐️' on the screen in place of each matched gem
+  // * Add to the player's score 
+  // ---------------------------------------------------------
+  starMatches(matches) {
+    matches.forEach(match => {
+      match.forEach(el => {
+        let gemType = el.type;
+        el.type = Game.MATCH_SYMBOL;
+        if (this.gameStarted && gemType !== Game.MATCH_SYMBOL) {
+          this.score++;
+          this.scoreString += gemType;
+        }
+      });
+    });
+    Screen.updateScreen(this.grid);
+    Screen.render()
+  }
+
+  // ----------------------
+  // FIND MATCHES
+  // ---------------------
   findMatches() {
     let rowsAndCols = this.getRowsAndCols();
     let matches = [];
@@ -107,6 +139,7 @@ class Game {
       let matchesInArray = Game.findMatchesInArray(rowOrCol);
       matchesInArray.forEach(match => matches.push(match));
     });
+    this.matches = matches;
     return matches;
   }
 
@@ -128,23 +161,6 @@ class Game {
 
     if (match.length >= Game.MIN_MATCH_LENGTH) matches.push(match);
     return matches;
-  }
-
-  starMatches() {
-    let matches = this.findMatches();
-    matches.forEach(match => {
-      match.forEach(el => {
-        let gemType = el.type;
-        el.type = Game.MATCH_SYMBOL;
-        if (this.gameStarted && gemType !== Game.MATCH_SYMBOL) {
-          this.score++;
-          this.scoreString += gemType;
-        }
-      });
-    });
-
-    Screen.updateScreen(this.grid);
-    Screen.render()
   }
 
   // ----------------------
@@ -183,8 +199,6 @@ class Game {
   // ----------------------
   // GRID HELPERS 
   // ---------------------
-
-
   getRowsAndCols() {
     let rows = this.grid;
     let cols = [];
