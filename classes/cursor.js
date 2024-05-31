@@ -5,13 +5,10 @@ class Cursor {
   constructor(numRows, numCols) {
     this.numRows = numRows;
     this.numCols = numCols;
-
     this.row = 0;
     this.col = 0;
-
     this.gridColor = 'black';
     this.cursorColor = 'magenta';
-
     this.setBackgroundColor(this.row, this.col, this.cursorColor);
     Screen.render();
   }
@@ -35,7 +32,6 @@ class Cursor {
       this.resetBackgroundColor();
       this.row--;
       this.setBackgroundColor();
-
     } else {
       this.logCursorErrorMessage();
     }
@@ -71,15 +67,16 @@ class Cursor {
     }
   }
 
-  // TODO: 
-  // figure out why helper function like move() below causes errors
-  // to reduce code in up, down, left, right
-  //
-  // move = (rowOrCol, increment) => {
-  //   this.resetBackgroundColor();
-  //   rowOrCol += increment;
-  //   this.setBackgroundColor();
-  // }
+  /* TODO: 
+     figure out why helper function like move() below causes errors
+     to reduce code in up, down, left, right
+  
+     move = (rowOrCol, increment) => {
+      this.resetBackgroundColor();
+      rowOrCol += increment;
+      this.setBackgroundColor();
+     }
+  */
 }
 
 module.exports = Cursor;

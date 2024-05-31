@@ -1,12 +1,28 @@
+/* --------------------------------
+ * DELAYS
+ * -------------------------------- */
 const DELAY_DEFAULT = 3000;
 const DELAY_AFTER_STARS_APPEAR = 1000;
+
+/* --------------------------------
+ * GAME OPTIONS
+ * -------------------------------- */
 const GEM_TYPES = ['🥥', '🍓', '🥝', '🍉'];
 const MIN_MATCH_LENGTH = 3;
 const MATCH_SYMBOL = '⭐️';
+
+/* --------------------------------
+ * COMMANDS
+ * -------------------------------- */
 const DIRECTIONS = ['up', 'down', 'left', 'right']; 
+
+/* --------------------------------
+ * MESSAGES
+ * -------------------------------- */
 const MESSAGE_MATCH_FOUND = '⭐️⭐️⭐️ Nice! You found a match!';
 const MESSAGE_INVALID_SWAP = "❌ That swap doesn't result in a match, please try again.";
 const MESSAGE_INVALID_CURSOR_MOVE = "❌ The cursor can't move that way, try another direction."
+const MESSAGE_GOODBYE = "\nThanks for playing!\nGoodbye.\n"
 const MESSAGE_WELCOME = `
 Welcome to Tropical!
   🥥 Your goal is to match 3 or more of the same item
@@ -14,7 +30,10 @@ Welcome to Tropical!
   🥝 Select items to swap by using the 's' key
   🍓 Use the arrow keys to move around the board
 `;
-const MESSAGE_GOODBYE = "\nThanks for playing!\nGoodbye.\n"
+
+/* --------------------------------
+ * COLORS
+ * -------------------------------- */
 const COLOR_CODES = {
   //background color
   blackBg: '\x1b[40m',

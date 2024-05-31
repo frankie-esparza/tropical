@@ -154,21 +154,21 @@ describe('Game', function () {
   // FIND MATCHES
   //*****************
 
-  describe('findMatchesInArray(array)', function () {
+  describe('findMatchesInRowOrCol(array)', function () {
     it('does not find match if array contains 0 matches', function () {
-      expect(MatchFinder.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
+      expect(MatchFinder.findMatchesInRowOrCol(rowWith0Matches)).to.deep.equal([]);
     });
 
     it('finds match if array contains 1 match', function () {
-      expect(MatchFinder.findMatchesInArray(match1)).to.deep.equal(matches1);
+      expect(MatchFinder.findMatchesInRowOrCol(match1)).to.deep.equal(matches1);
     });
 
     it('finds match if array contains 2 matches', function () {
-      expect(MatchFinder.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
+      expect(MatchFinder.findMatchesInRowOrCol(rowWith2Matches)).to.deep.equal(matches3);
     });
 
     it('finds match if array contains a match of 2, and then 1 match', function () {
-      expect(MatchFinder.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
+      expect(MatchFinder.findMatchesInRowOrCol(rowWithMatchof2)).to.deep.equal(matches4);
     });
   });
 
