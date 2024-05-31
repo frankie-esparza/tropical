@@ -1,6 +1,8 @@
+const chai = require('chai');
 const { expect } = require('chai');
+const spies = require('chai-spies');
 const Cursor = require("../classes/cursor.js");
-const Screen = require("../classes/screen.js");
+chai.use(spies);
 
 describe('Cursor', function () {
   let cursor;

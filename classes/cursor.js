@@ -1,6 +1,11 @@
 const Screen = require("./screen");
 const { MESSAGE_INVALID_CURSOR_MOVE } = require("../constants/constants.js");
 
+/**
+ * Cursor class
+ * @property {number} row - current row location of the cursor
+ * @property {number} col - current column location of the cursor
+ */
 class Cursor {
   constructor(numRows, numCols) {
     this.numRows = numRows;
@@ -8,7 +13,7 @@ class Cursor {
     this.row = 0;
     this.col = 0;
     this.gridColor = 'black';
-    this.cursorColor = 'magenta';
+    this.cursorColor = 'white';
     this.setBackgroundColor(this.row, this.col, this.cursorColor);
     Screen.render();
   }
