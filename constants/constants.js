@@ -6,6 +6,7 @@ const MATCH_SYMBOL = '⭐️';
 const DIRECTIONS = ['up', 'down', 'left', 'right']; 
 const MESSAGE_MATCH_FOUND = '⭐️⭐️⭐️ Nice! You found a match!';
 const MESSAGE_INVALID_SWAP = "❌ That swap doesn't result in a match, please try again.";
+const MESSAGE_INVALID_CURSOR_MOVE = "❌ The cursor can't move that way, try another direction."
 const MESSAGE_WELCOME = `
 Welcome to Tropical!
   🥥 Your goal is to match 3 or more of the same item
@@ -38,6 +39,7 @@ module.exports = {
     DIRECTIONS,
     MESSAGE_MATCH_FOUND,
     MESSAGE_INVALID_SWAP,
+    MESSAGE_INVALID_CURSOR_MOVE,
     MESSAGE_WELCOME,
     COLOR_CODES,
     DEFAULT_BACKGROUND_COLOR,
