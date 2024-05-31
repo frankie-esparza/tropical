@@ -1,5 +1,6 @@
 const keypress = require('keypress');
 const Command = require('./command');
+const { COLOR_CODES, DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, MESSAGE_GOODBYE } = require("../constants/constants.js");
 
 class Screen {
   // size 
@@ -13,8 +14,6 @@ class Screen {
   static gridLines = false;
 
   // colors
-  static defaultTextColor = '\x1b[37m';  // White
-  static defaultBackgroundColor = '\x1b[40m';  // Black
   static textColors = [];
   static backgroundColors = [];
 
@@ -26,7 +25,7 @@ class Screen {
 
 
   // ----------------------
-  // INITIALIZE SCREEN
+  // SETUP 
   // ----------------------
   static initialize(numRows, numCols) {
     Screen.numRows = numRows;
@@ -37,17 +36,17 @@ class Screen {
 
     for (let row = 0; row < numRows; row++) {
       Screen.grid.push(new Array(numCols).fill(" "));
-      Screen.textColors.push(new Array(numCols).fill(Screen.defaultTextColor));
-      Screen.backgroundColors.push(new Array(numCols).fill(Screen.defaultBackgroundColor));
+      Screen.textColors.push(new Array(numCols).fill(DEFAULT_TEXT_COLOR));
+      Screen.backgroundColors.push(new Array(numCols).fill(DEFAULT_BACKGROUND_COLOR));
     }
 
-    Screen.setQuitMessage("\nThank you for playing! \nGoodbye.\n");
+    Screen.setGridlines(false);
+    Screen.setQuitMessage(MESSAGE_GOODBYE);
     const quitCmd = new Command('q', 'quit the game', Screen.quit);
     Screen.commands['q'] = quitCmd;
     Screen.initialized = true;
     Screen.waitForInput();
   }
-
   
   // ----------------------
   // GAMEPLAY
@@ -105,12 +104,12 @@ class Screen {
         if (!(textColor && backgroundColor)) textColor = '\x1b[0m';
 
         let vertLine = (Screen.gridLines && col > 0) ? '|' : '';
-        rowCopy[col] = `${Screen.defaultBackgroundColor}${vertLine}\x1b[0m${textColor}${backgroundColor}${spacer}${rowCopy[col]}${spacer}\x1b[0m`;
+        rowCopy[col] = `${DEFAULT_BACKGROUND_COLOR}${vertLine}\x1b[0m${textColor}${backgroundColor}${spacer}${rowCopy[col]}${spacer}\x1b[0m`;
       }
 
       if (Screen.gridLines && row > 0) {
         let horizontalGridLine = new Array(rowCopy.length * 4 - 1).fill('-');
-        horizontalGridLine.unshift(`${Screen.borderChar}${Screen.defaultBackgroundColor}`);
+        horizontalGridLine.unshift(`${Screen.borderChar}${DEFAULT_BACKGROUND_COLOR}`);
         horizontalGridLine.push(`\x1b[0m${Screen.borderChar}`);
         console.log(horizontalGridLine.join(''));
       }
@@ -160,19 +159,7 @@ class Screen {
 
   static setBackgroundColor(row, col, color) {
     if (!Screen.initialized) return;
-    const colorCodes = {
-      //background color
-      blackBg: '\x1b[40m',
-      redBg: '\x1b[41m',
-      greenBg: '\x1b[42m',
-      yellowBg: '\x1b[43m',
-      blueBg: '\x1b[44m',
-      cyanBg: '\x1b[46m',
-      whiteBg: '\x1b[47m',
-      magentaBg: '\x1b[45m',
-    }
-
-    let code = colorCodes[color + 'Bg'];
+    let code = COLOR_CODES[color + 'Bg'];
 
     if (!code) {
       throw new Error("Invalid background color");
@@ -200,18 +187,7 @@ class Screen {
 
   static setTextColor(row, col, color) {
     if (!Screen.initialized) return;
-    const colorCodes = {
-      black: '\x1b[30m',
-      red: '\x1b[31m',
-      green: '\x1b[32m',
-      yellow: '\x1b[33m',
-      blue: '\x1b[34m',
-      magenta: '\x1b[35m',
-      cyan: '\x1b[36m',
-      white: '\x1b[37m',
-    }
-
-    let code = colorCodes[color];
+    let code = COLOR_CODES[color];
     if (!code) {
       throw new Error("Invalid color");
     }
