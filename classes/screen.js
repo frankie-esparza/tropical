@@ -24,9 +24,9 @@ class Screen {
   static initialized = false;
 
 
-  // ----------------------
-  // SETUP 
-  // ----------------------
+  /* --------------------------------
+   * MAIN
+   * -------------------------------- */
   static initialize(numRows, numCols) {
     Screen.numRows = numRows;
     Screen.numCols = numCols;
@@ -48,9 +48,9 @@ class Screen {
     Screen.waitForInput();
   }
   
-  // ----------------------
-  // GAMEPLAY
-  // ----------------------
+  /* --------------------------------
+   * GAMEPLAY
+   * -------------------------------- */
   static updateScreen(grid) {
     for (let col = 0; col < Screen.numCols; col++) {
       for (let row = 0; row < Screen.numRows; row++) {
@@ -80,10 +80,6 @@ class Screen {
     process.stdin.resume();
   }
 
-
-  // ----------------------
-  // GAMEPLAY HELPERS
-  // ----------------------
   static render() {
     if (!Screen.initialized) return;
     const spacer = new Array(Screen.spacerCount).fill(' ').join('');
@@ -133,10 +129,9 @@ class Screen {
     process.exit(1);
   }
 
-
-  // ----------------------
-  // SETUP HELPERS
-  // ----------------------
+  /* --------------------------------
+   * SETUP
+   * -------------------------------- */
   static addCommand(key, description, action) {
     if (key === 'q') {
       throw new Error("you cannot overwrite 'q'");

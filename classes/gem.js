@@ -1,5 +1,11 @@
 const { GEM_TYPES } = require("../constants/constants.js");
 
+/** 
+ * Gem class 
+ * @property { string } type - the type of gem e.g. '🥥', '🍓', '🥝', '🍉';
+ * @property { number } row - current row location of the gem 
+ * @property { number } col - current col location of the gem 
+ */
 class Gem {  
     constructor(row, col, type) {
       this.row = row;

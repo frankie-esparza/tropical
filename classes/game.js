@@ -11,7 +11,7 @@ const {
 } = require("../constants/constants.js");
 
 class Game {
-  static BOARD_SIZE = 8; // need this to be a static var so it can be changed for testing
+  static BOARD_SIZE = 8; // this is a static var not constant so it can be lowered to write tests more easily
 
   constructor() {
     this.grid = [];
@@ -28,9 +28,9 @@ class Game {
     this.gameStarted = true;
   }
 
-  // ----------------------
-  // PLAY GAME
-  // ----------------------
+  /* --------------------------------
+   * MAIN
+   * -------------------------------- */
   playGame() {
     this.matches = MatchFinder.findMatches(this.grid);
     while (this.matches.length > 0) {
@@ -43,61 +43,56 @@ class Game {
     console.log(`SCORE: ${this.score}\nGEMS COLLECTED: ${this.scoreString}`);
   }
 
-  // ----------------------
-  // SELECT GEM 
-  // ----------------------
+  /* --------------------------------
+   * USER ACTION HANDLERS
+   * -------------------------------- */
   selectGem() {
     let gem = this.grid[this.cursor.row][this.cursor.col];
-    // Less than 2 gems selected so far
+    // if user hasn't yet selected enough gems to check for a match, add gem to this.selectedGems
     if (this.selectedGems.length < MIN_MATCH_LENGTH - 1){
       this.selectedGems.push(gem);
     }
-
-    // 2 gems selected
+    // if user selected enough gems to check for match, swap gems & check for match
     if (this.selectedGems.length === MIN_MATCH_LENGTH - 1) {
-      let selectedGems = this.selectedGems; // store gems in case they need to be swapped back
       this.swapGems();
-
-      // Match
-      if (MatchFinder.findMatches(this.grid).length > 0) {
-        Screen.setMessage(MESSAGE_MATCH_FOUND);
-        setTimeout(this.findAndStarMatches.bind(this), DELAY_AFTER_STARS_APPEAR);
-        setTimeout(this.playGame.bind(this), DELAY_DEFAULT);
-
-      // No Match
-      } else {
-        Screen.setMessage(MESSAGE_INVALID_SWAP);
-        this.selectedGems = selectedGems;
-        setTimeout(this.swapGems.bind(this), DELAY_DEFAULT);
-      }
+      this.handleMatchAttempt();
     }
   }
-  
-  // ----------------------
-  // SWAP GEMS
-  // ----------------------
+
   swapGems() {
     const [gem1, gem2] = this.selectedGems;
-    const [r1, r2, c1, c2] = [ gem1.row, gem2.row, gem1.col, gem2.col ];
+    const [r1, r2, c1, c2] = [gem1.row, gem2.row, gem1.col, gem2.col];
     [this.grid[r1][c1].type, this.grid[r2][c2].type] = 
     [this.grid[r2][c2].type, this.grid[r1][c1].type];
     Screen.updateScreen(this.grid);
     this.selectedGems = [];
   }
 
-  // ----------------------
-  // FIND & STAR MATCHES
-  // ----------------------
-  findAndStarMatches(){
-    this.starMatches(MatchFinder.findMatches(this.grid))
+  handleMatchAttempt(){
+    // If there's a match, tell user & star the matched gems
+    if (MatchFinder.findMatches(this.grid).length > 0) {
+      Screen.setMessage(MESSAGE_MATCH_FOUND);
+      setTimeout(this.findAndStarMatches.bind(this), DELAY_AFTER_STARS_APPEAR);
+      setTimeout(this.playGame.bind(this), DELAY_DEFAULT);
+
+    // If there's no match, tell user & swap gems back
+    } else {
+      Screen.setMessage(MESSAGE_INVALID_SWAP);
+      this.selectedGems = selectedGems;
+      setTimeout(this.swapGems.bind(this), DELAY_DEFAULT);
+    }
   }
 
-  // -----------------------------------------------------------
-  // STAR MATCHES 
-  // * Shows a '⭐️' in place of each matched gem & updates score 
-  // -----------------------------------------------------------
-  starMatches(matches) {
-    matches.forEach(match => {
+  /* --------------------------------
+   * MATCH HANDLERS
+   * -------------------------------- */
+  findAndStarMatches(){
+    this.matches = MatchFinder.findMatches(this.grid);
+    this.starMatches(this.matches)
+  }
+
+  starMatches() {
+    this.matches.forEach(match => {
       match.forEach(el => {
         let gemType = el.type;
         el.type = MATCH_SYMBOL;
@@ -111,30 +106,23 @@ class Game {
     Screen.render()
   }
 
-  // ----------------------
-  // SETUP
-  // ----------------------
+  /* --------------------------------
+   * SETUP  
+   * -------------------------------- */
+  setupScreen = () => Screen.initialize(Game.BOARD_SIZE, Game.BOARD_SIZE);
+  setupCursor = () => this.cursor = new Cursor(Game.BOARD_SIZE, Game.BOARD_SIZE);
+
   setupBoard() {
     this.grid = Array.from({ length: Game.BOARD_SIZE }, (_, row) =>
       Array.from({ length: Game.BOARD_SIZE }, (_, col) => new Gem(row, col, Gem.getRandomGemType()))
     );
   }
 
-  setupCursor(){
-    this.cursor = new Cursor(Game.BOARD_SIZE, Game.BOARD_SIZE);
-    this.cursor.setBackgroundColor();
-  }
-
   setupCommands() {
     DIRECTIONS.forEach(dir => Screen.addDirectionCommand(dir, this.cursor[dir], this.cursor) );
     Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
-    Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
     Screen.setMessage(MESSAGE_WELCOME);
     Screen.printCommands();
-}
-
-  setupScreen(){
-    Screen.initialize(Game.BOARD_SIZE, Game.BOARD_SIZE);
   }
 }
   

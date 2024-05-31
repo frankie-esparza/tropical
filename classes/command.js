@@ -1,5 +1,4 @@
 class Command {
-
   constructor(key, description, action) {
     this.key = key;
     this.description = description;
@@ -11,6 +10,5 @@ class Command {
   }
 
 }
-
 
 module.exports = Command;
