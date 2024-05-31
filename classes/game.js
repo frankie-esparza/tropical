@@ -18,9 +18,9 @@ class Game {
     this.score = 0;
     this.scoreString = '';
     this.gameStarted = false;
+    this.setupScreen();
     this.setupBoard();
     this.setupCursor();
-    this.setupScreen();
     this.setupCommands();
     this.playGame();
     this.gameStarted = true;
@@ -38,31 +38,30 @@ class Game {
     }
     Screen.updateScreen(this.grid);
     Screen.render();
-    console.log(`SCORE: ${this.score}`);
-    console.log(`GEMS COLLECTED: ${this.scoreString}\n`);
+    console.log(`SCORE: ${this.score}\nGEMS COLLECTED: ${this.scoreString}`);
   }
 
   // ----------------------
-  // USER ACTIONS 
+  // SELECT GEM 
   // ----------------------
   selectGem() {
     let gem = this.grid[this.cursor.row][this.cursor.col];
     if (this.selectedGems.length < MIN_MATCH_LENGTH - 1) this.selectedGems.push(gem);
 
-    // If player selected 2 gems total, check to see if they make a match
+    // Player selected correct number of gems
     if (this.selectedGems.length === MIN_MATCH_LENGTH - 1) {
       let gem1 = this.selectedGems[0];
       let gem2 = this.selectedGems[1];
       this.swapGems();
       let matches = this.findMatches();
 
-      // If there's a match
+      // Match
       if (matches.length > 0) {
         console.log(MESSAGE_MATCH_FOUND);
         setTimeout(this.findAndStarMatches.bind(this), DELAY_AFTER_STARS_APPEAR);
         setTimeout(this.playGame.bind(this), DELAY_DEFAULT);
 
-      // If there isn't a match
+      // No Match
       } else {
         console.log(MESSAGE_INVALID_SWAP);
         this.selectedGems = [gem1, gem2];
@@ -71,16 +70,15 @@ class Game {
     }
   }
   
+  // ----------------------
+  // SWAP GEMS
+  // ----------------------
   swapGems() {
-    let gem1 = this.selectedGems[0];
-    let gem2 = this.selectedGems[1];
-
-    let gem1Type = gem1.type;
-    let gem2Type = gem2.type;
-
-    this.grid[gem1.row][gem1.col].type = gem2Type;
-    this.grid[gem2.row][gem2.col].type = gem1Type;
-
+    const [gem1, gem2] = this.selectedGems;
+    const [r1, r2] = [ gem1.row, gem2.row ];
+    const [c1, c2] = [ gem1.col, gem2.col ];
+    [this.grid[r1][c1].type, this.grid[r2][c2].type] = 
+    [this.grid[r2][c2].type, this.grid[r1][c1].type];
     Screen.updateScreen(this.grid);
     this.selectedGems = [];
   }
@@ -88,21 +86,14 @@ class Game {
   // ----------------------
   // FIND & STAR MATCHES
   // ----------------------
-  findAndStarMatches() {
-    let matches = this.findMatches();
-    this.starMatches(matches)
+  findAndStarMatches(){
+    this.starMatches(this.findMatches())
   }
 
   findMatches() {
-    let rowsAndCols = this.getRowsAndCols();
-    let matches = [];
-
-    rowsAndCols.forEach(rowOrCol => {
-      let matchesInArray = Game.findMatchesInArray(rowOrCol);
-      matchesInArray.forEach(match => matches.push(match));
-    });
-    this.matches = matches;
-    return matches;
+    const rowsAndCols = this.getRowsAndCols(); // get all rows & cols
+    this.matches = rowsAndCols.flatMap(array => Game.findMatchesInArray(array)); // look for matches in all rows & cols
+    return this.matches;
   }
 
   static findMatchesInArray(array) {
@@ -125,17 +116,9 @@ class Game {
   }
 
   getRowsAndCols() {
-    let rows = this.grid;
-    let cols = [];
-
-    for (let col = 0; col < Game.BOARD_SIZE; col++) {
-      let column = [];
-      rows.forEach(row => column.push(row[col]));
-      cols.push(column);
-    }
-
-    let rowsAndCols = [...rows, ...cols];
-    return rowsAndCols;
+    const rows = this.grid;
+    const cols = Array.from({ length: Game.BOARD_SIZE }, (_, col) => rows.map(row => row[col]) );
+    return [...rows, ...cols];
   }
 
   // -----------------------------------------------------------
@@ -160,24 +143,15 @@ class Game {
   // ----------------------
   // SETUP
   // ----------------------
-  setupBoard(){
-    for (let r = 0; r < Game.BOARD_SIZE; r++) {
-      let row = [];
-      for (let c = 0; c < Game.BOARD_SIZE; c++) {
-        let gemType = Gem.getRandomGemType();
-        row.push(new Gem(r, c, gemType));
-      }
-      this.grid.push(row);
-    }
+  setupBoard() {
+    this.grid = Array.from({ length: Game.BOARD_SIZE }, (_, row) =>
+      Array.from({ length: Game.BOARD_SIZE }, (_, col) => new Gem(row, col, Gem.getRandomGemType()))
+    );
   }
 
   setupCursor(){
     this.cursor = new Cursor(Game.BOARD_SIZE, Game.BOARD_SIZE);
     this.cursor.setBackgroundColor();
-  }
-
-  setupScreen(){
-    Screen.initialize(Game.BOARD_SIZE, Game.BOARD_SIZE);
   }
 
   setupCommands() {
@@ -186,6 +160,10 @@ class Game {
     Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
     console.log(MESSAGE_WELCOME)
     Screen.printCommands();
+}
+
+  setupScreen(){
+    Screen.initialize(Game.BOARD_SIZE, Game.BOARD_SIZE);
   }
 }
   
