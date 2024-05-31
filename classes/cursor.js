@@ -1,4 +1,5 @@
 const Screen = require("./screen");
+const { MESSAGE_INVALID_CURSOR_MOVE } = require("../constants/constants.js");
 
 class Cursor {
   constructor(numRows, numCols) {
@@ -26,7 +27,7 @@ class Cursor {
   }
 
   logCursorErrorMessage = () => {
-    console.log("The cursor can't move that way, try another direction.");
+    console.log(MESSAGE_INVALID_CURSOR_MOVE);
   }
 
   up() {

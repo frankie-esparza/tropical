@@ -46,25 +46,26 @@ class Game {
   // ----------------------
   selectGem() {
     let gem = this.grid[this.cursor.row][this.cursor.col];
-    if (this.selectedGems.length < MIN_MATCH_LENGTH - 1) this.selectedGems.push(gem);
+    // Less than 2 gems selected so far
+    if (this.selectedGems.length < MIN_MATCH_LENGTH - 1){
+      this.selectedGems.push(gem);
+    }
 
-    // Player selected correct number of gems
+    // 2 gems selected
     if (this.selectedGems.length === MIN_MATCH_LENGTH - 1) {
-      let gem1 = this.selectedGems[0];
-      let gem2 = this.selectedGems[1];
+      let selectedGems = this.selectedGems; // store gems in case they need to be swapped back
       this.swapGems();
-      let matches = this.findMatches();
 
       // Match
-      if (matches.length > 0) {
-        console.log(MESSAGE_MATCH_FOUND);
+      if (this.findMatches().length > 0) {
+        Screen.setMessage(MESSAGE_MATCH_FOUND);
         setTimeout(this.findAndStarMatches.bind(this), DELAY_AFTER_STARS_APPEAR);
         setTimeout(this.playGame.bind(this), DELAY_DEFAULT);
 
       // No Match
       } else {
-        console.log(MESSAGE_INVALID_SWAP);
-        this.selectedGems = [gem1, gem2];
+        Screen.setMessage(MESSAGE_INVALID_SWAP);
+        this.selectedGems = selectedGems;
         setTimeout(this.swapGems.bind(this), DELAY_DEFAULT);
       }
     }
@@ -75,8 +76,7 @@ class Game {
   // ----------------------
   swapGems() {
     const [gem1, gem2] = this.selectedGems;
-    const [r1, r2] = [ gem1.row, gem2.row ];
-    const [c1, c2] = [ gem1.col, gem2.col ];
+    const [r1, r2, c1, c2] = [ gem1.row, gem2.row, gem1.col, gem2.col ];
     [this.grid[r1][c1].type, this.grid[r2][c2].type] = 
     [this.grid[r2][c2].type, this.grid[r1][c1].type];
     Screen.updateScreen(this.grid);
@@ -92,7 +92,7 @@ class Game {
 
   findMatches() {
     const rowsAndCols = this.getRowsAndCols(); // get all rows & cols
-    this.matches = rowsAndCols.flatMap(array => Game.findMatchesInArray(array)); // look for matches in all rows & cols
+    this.matches = rowsAndCols.flatMap(arr => Game.findMatchesInArray(arr)); // look for matches in all rows & cols
     return this.matches;
   }
 
@@ -158,7 +158,7 @@ class Game {
     DIRECTIONS.forEach(dir => Screen.addDirectionCommand(dir, this.cursor[dir], this.cursor) );
     Screen.addCommand('s', 'to select a gem', this.selectGem.bind(this));
     Screen.addCommand('h', 'to see a list of the commands', Screen.printCommands);
-    console.log(MESSAGE_WELCOME)
+    Screen.setMessage(MESSAGE_WELCOME);
     Screen.printCommands();
 }
 
