@@ -1,6 +1,6 @@
 const { MIN_MATCH_LENGTH } = require("../constants/constants.js");
 
-class MatchFinder{
+class MatchFinder {
   /* --------------------------------
    * FIND MATCHES
    * -------------------------------- */
@@ -52,7 +52,7 @@ class MatchFinder{
 
   static getRowsAndCols(grid) {
     const rows = grid;
-    const cols = Array.from({ length: grid.length }, (_, col) => rows.map(row => row[col]) );
+    const cols = Array.from({ length: grid.length }, (_, col) => rows.map(row => row[col]));
     return [...rows, ...cols];
   }
 }

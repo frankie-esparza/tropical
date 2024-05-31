@@ -1,10 +1,10 @@
 const Gem = require("./gem");
 const { MATCH_SYMBOL } = require("../constants/constants.js");
 
-class MatchHandler{
+class MatchHandler {
   /* --------------------------------
-   * MAIN
-   * -------------------------------- */
+  * MAIN
+  * -------------------------------- */
   static clearMatches(grid) {
     let columns = MatchHandler.getColumnsFromGrid(grid);
 
@@ -61,7 +61,7 @@ class MatchHandler{
    * @returns {void}
    */
   static findLowestGemAboveStar(column, star) {
-    if (star === null) return null; 
+    if (star === null) return null;
     let top = 0
     let bottom = star.row - 1;
     for (let i = bottom; i >= top; i--) {
@@ -74,10 +74,10 @@ class MatchHandler{
    * REFILL GEMS
    * -------------------------------- */
   static addRandomGemsAtTop(column) {
-  for (let row = 0; row < column.length - 1; row++) {
-    let el = column[row];
-    if (el.type === MATCH_SYMBOL) el.type = Gem.getRandomGemType();
-    else break;
+    for (let row = 0; row < column.length - 1; row++) {
+      let el = column[row];
+      if (el.type === MATCH_SYMBOL) el.type = Gem.getRandomGemType();
+      else break;
     }
     return column;
   }
@@ -86,7 +86,7 @@ class MatchHandler{
    * SWITCH BETWEEN COLS & ROWS
    * -------------------------------- */
   static getGridFromColumns = (columns) => this.transpose(columns);
-  static getColumnsFromGrid = (rows)  => this.transpose(rows);
+  static getColumnsFromGrid = (rows) => this.transpose(rows);
 
   static transpose(matrix) {
     const numRows = matrix.length;

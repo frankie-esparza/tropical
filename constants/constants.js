@@ -14,7 +14,7 @@ const MATCH_SYMBOL = '⭐️';
 /* --------------------------------
  * COMMANDS
  * -------------------------------- */
-const DIRECTIONS = ['up', 'down', 'left', 'right']; 
+const DIRECTIONS = ['up', 'down', 'left', 'right'];
 
 /* --------------------------------
  * MESSAGES
@@ -50,20 +50,19 @@ const DEFAULT_BACKGROUND_COLOR = '\x1b[40m';  // Black
 
 
 module.exports = {
-    DELAY_DEFAULT,
-    DELAY_AFTER_STARS_APPEAR,
-    GEM_TYPES,
-    MIN_MATCH_LENGTH,
-    MATCH_SYMBOL,
-    DIRECTIONS,
-    MESSAGE_MATCH_FOUND,
-    MESSAGE_INVALID_SWAP,
-    MESSAGE_INVALID_CURSOR_MOVE,
-    MESSAGE_WELCOME,
-    COLOR_CODES,
-    DEFAULT_BACKGROUND_COLOR,
-    DEFAULT_TEXT_COLOR,
-    MESSAGE_GOODBYE
+  DELAY_DEFAULT,
+  DELAY_AFTER_STARS_APPEAR,
+  GEM_TYPES,
+  MIN_MATCH_LENGTH,
+  MATCH_SYMBOL,
+  DIRECTIONS,
+  MESSAGE_MATCH_FOUND,
+  MESSAGE_INVALID_SWAP,
+  MESSAGE_INVALID_CURSOR_MOVE,
+  MESSAGE_WELCOME,
+  COLOR_CODES,
+  DEFAULT_BACKGROUND_COLOR,
+  DEFAULT_TEXT_COLOR,
+  MESSAGE_GOODBYE
 }
 
-  
