@@ -1,7 +1,9 @@
 const Screen = require("./screen");
 const Cursor = require("./cursor");
 const Gem = require("./gem");
+const MatchFinder = require("./matchFinder");
 const MatchHandler = require("./matchHandler");
+
 const { 
   DELAY_DEFAULT, DELAY_AFTER_STARS_APPEAR, 
   MIN_MATCH_LENGTH, MATCH_SYMBOL, DIRECTIONS,
@@ -30,11 +32,11 @@ class Game {
   // PLAY GAME
   // ----------------------
   playGame() {
-    this.findMatches.call(this);
+    this.matches = MatchFinder.findMatches(this.grid);
     while (this.matches.length > 0) {
-      this.findAndStarMatches();
-      this.grid = MatchHandler.clearMatches.call(this, this.grid);
-      this.matches = this.findMatches.call(this);
+      this.findAndStarMatches(this.grid);
+      this.grid = MatchHandler.clearMatches(this.grid);
+      this.matches = MatchFinder.findMatches(this.grid);
     }
     Screen.updateScreen(this.grid);
     Screen.render();
@@ -57,7 +59,7 @@ class Game {
       this.swapGems();
 
       // Match
-      if (this.findMatches().length > 0) {
+      if (MatchFinder.findMatches(this.grid).length > 0) {
         Screen.setMessage(MESSAGE_MATCH_FOUND);
         setTimeout(this.findAndStarMatches.bind(this), DELAY_AFTER_STARS_APPEAR);
         setTimeout(this.playGame.bind(this), DELAY_DEFAULT);
@@ -87,38 +89,7 @@ class Game {
   // FIND & STAR MATCHES
   // ----------------------
   findAndStarMatches(){
-    this.starMatches(this.findMatches())
-  }
-
-  findMatches() {
-    const rowsAndCols = this.getRowsAndCols(); // get all rows & cols
-    this.matches = rowsAndCols.flatMap(arr => Game.findMatchesInArray(arr)); // look for matches in all rows & cols
-    return this.matches;
-  }
-
-  static findMatchesInArray(array) {
-    let matchType = array[0].type;
-    let matches = [];
-    let match = [];
-
-    for (let i = 0; i < array.length; i++) {
-      let el = array[i];
-      if (el.type === matchType) {
-        match.push(el);
-      } else {
-        matchType = el.type;
-        if (match.length >= MIN_MATCH_LENGTH) matches.push(match);
-        match = [el];
-      }
-    }
-    if (match.length >= MIN_MATCH_LENGTH) matches.push(match);
-    return matches;
-  }
-
-  getRowsAndCols() {
-    const rows = this.grid;
-    const cols = Array.from({ length: Game.BOARD_SIZE }, (_, col) => rows.map(row => row[col]) );
-    return [...rows, ...cols];
+    this.starMatches(MatchFinder.findMatches(this.grid))
   }
 
   // -----------------------------------------------------------
