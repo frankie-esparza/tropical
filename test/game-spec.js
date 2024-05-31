@@ -3,6 +3,7 @@ const chai = require('chai');
 const spies = require('chai-spies');
 const Game = require("../classes/game.js");
 const Gem = require("../classes/gem.js");
+const MatchFinder = require("../classes/matchFinder");
 const MatchHandler = require("../classes/matchHandler")
 const { GEM_TYPES } = require("../constants/constants.js");
 
@@ -145,7 +146,7 @@ describe('Game', function () {
 
   describe('getRowsAndCols()', function () {
     it('gets all rows and columns in the grid', function () {
-      expect(bj.getRowsAndCols()).to.deep.equal(rowsAndCols);
+      expect(MatchFinder.getRowsAndCols(bj.grid)).to.deep.equal(rowsAndCols);
     });
   });
 
@@ -155,35 +156,35 @@ describe('Game', function () {
 
   describe('findMatchesInArray(array)', function () {
     it('does not find match if array contains 0 matches', function () {
-      expect(Game.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
+      expect(MatchFinder.findMatchesInArray(rowWith0Matches)).to.deep.equal([]);
     });
 
     it('finds match if array contains 1 match', function () {
-      expect(Game.findMatchesInArray(match1)).to.deep.equal(matches1);
+      expect(MatchFinder.findMatchesInArray(match1)).to.deep.equal(matches1);
     });
 
     it('finds match if array contains 2 matches', function () {
-      expect(Game.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
+      expect(MatchFinder.findMatchesInArray(rowWith2Matches)).to.deep.equal(matches3);
     });
 
     it('finds match if array contains a match of 2, and then 1 match', function () {
-      expect(Game.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
+      expect(MatchFinder.findMatchesInArray(rowWithMatchof2)).to.deep.equal(matches4);
     });
   });
 
   describe('findMatches()', function () {
     it('does not find matches if there are 0 present', function () {
-      expect(bj.findMatches()).to.deep.equal([]);
+      expect(MatchFinder.findMatches(bj.grid)).to.deep.equal([]);
     });
 
     it('finds matches if there is 1 present', function () {
       bj.grid = gridAfterSwap;
-      expect(bj.findMatches()).to.deep.equal(matches1);
+      expect(MatchFinder.findMatches(bj.grid)).to.deep.equal(matches1);
     });
 
     it('finds matches if there are 2 present', function () {
       bj.grid = gridAfterSwap2;
-      expect(bj.findMatches()).to.deep.equal(matches2);
+      expect(MatchFinder.findMatches(bj.grid)).to.deep.equal(matches2);
     });
   });
 });
