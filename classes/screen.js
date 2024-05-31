@@ -50,7 +50,7 @@ class Screen {
     Screen.initialized = true;
     Screen.waitForInput();
   }
-  
+
   /* --------------------------------
    * GAMEPLAY
    * -------------------------------- */

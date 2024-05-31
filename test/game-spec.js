@@ -36,7 +36,7 @@ describe('Game', function () {
   let rowWithMatchof2;
 
   beforeEach(function () {
-    // *************************************
+    // --------------------------------
     // SCENARIO 1: 1 match, before swap (THIS GRID IS USED FOR MOST TESTS BELOW)
     grid = [
       [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥝' }], // match if you swap 🥝 & 🥥
@@ -64,7 +64,7 @@ describe('Game', function () {
     gem3 = { row: 1, col: 2, gem: '🍉' };
     gem4 = { row: 0, col: 1, type: '🥥' };
 
-    // *************************************
+    // --------------------------------
     // SCENARIO 2: 1 match, after swap
     gridAfterSwap = [
       [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
@@ -75,7 +75,7 @@ describe('Game', function () {
     match1 = [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }];
     matches1 = [match1];
 
-    // *************************************
+    // --------------------------------
     // SCENARIO 3: 2 matches, after swap
     gridAfterSwap2 = [
       [{ row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🥥' }],
@@ -86,7 +86,7 @@ describe('Game', function () {
     match2 = [gridAfterSwap2[1][0], gridAfterSwap2[1][1], gridAfterSwap2[1][2]];
     matches2 = [match1, match2];
 
-    // *************************************
+    // --------------------------------
     // SCENARIO 4: 2 matches in same row
     match3 = [{ row: 0, col: 3, type: '🍉' }, { row: 0, col: 4, type: '🍉' }, { row: 0, col: 5, type: '🍉' }];
 
@@ -97,7 +97,7 @@ describe('Game', function () {
 
     matches3 = [match1, match3];
 
-    // **************************************
+    // --------------------------------
     // SCENARIO 5: row contains a match of 2, and then 1 match
     rowWithMatchof2 = [
       { row: 0, col: 0, type: '🥥' }, { row: 0, col: 1, type: '🥥' }, { row: 0, col: 2, type: '🍉' }, { row: 0, col: 3, type: '🥝' },
@@ -109,10 +109,10 @@ describe('Game', function () {
 
   });
 
-  // *******************
+  // --------------------------------
   // UNIT TESTS
-  // *******************
-  describe('getRandomGemType()', function () {
+  // --------------------------------
+    describe('getRandomGemType()', function () {
     it('returns a random gem', function () {
       let randomGem = Gem.getRandomGemType();
       expect(randomGem === GEM_TYPES[0] || randomGem === GEM_TYPES[1] || randomGem === GEM_TYPES[2] || randomGem === GEM_TYPES[3]).to.be.true;
@@ -150,10 +150,9 @@ describe('Game', function () {
     });
   });
 
-  //*****************
+  // --------------------------------
   // FIND MATCHES
-  //*****************
-
+  // --------------------------------
   describe('findMatchesInRowOrCol(array)', function () {
     it('does not find match if array contains 0 matches', function () {
       expect(MatchFinder.findMatchesInRowOrCol(rowWith0Matches)).to.deep.equal([]);
@@ -189,10 +188,10 @@ describe('Game', function () {
   });
 });
 
-//*****************
-// CLEAR MATCHES
-//*****************
-describe('Game', function () {
+  // --------------------------------
+  // CLEAR MATCHES
+  // --------------------------------
+  describe('Game', function () {
   let col1;
   let col2;
   let col3;
@@ -218,7 +217,7 @@ describe('Game', function () {
   let lowestGemAboveStar4;
 
   beforeEach(function () {
-    // *******************************
+    // --------------------------------
     // 0 Sets of Falling Gems, 0 matches
     col1 = [
       { row: 0, col: 0, type: '🥥' }, // no matches
@@ -234,7 +233,7 @@ describe('Game', function () {
     lowestStar1 = null;
     lowestGemAboveStar1 = null;
 
-    // *******************************
+    // --------------------------------
     // 0 Sets of Falling Gems, 1 match
     col2 = [
       { row: 0, col: 0, type: '⭐️' }, // nothing will fall down, starts will become rand gems
@@ -250,7 +249,7 @@ describe('Game', function () {
     lowestStar2 = { row: 3, col: 0, type: '⭐️' };
     lowestGemAboveStar2 = null;
 
-    // ***********************
+    // --------------------------------
     // 1 Set of Falling Gems
     col3 = [
       { row: 0, col: 0, type: '🥭' }, // mangos will fall down
@@ -290,7 +289,7 @@ describe('Game', function () {
 
     numStars3 = 3;
 
-    // ***********************
+    // --------------------------------
     // 2 Sets of Falling Gems
     col4 = [
       { row: 0, col: 0, type: '⭐️' },
@@ -331,10 +330,9 @@ describe('Game', function () {
     numStars4 = 5;
   });
 
-  // **********
+  // --------------------------------
   // UNIT TESTS
-  // **********
-
+  // --------------------------------
   describe('findLowestStar(column)', function () {
     it('does NOT find lowest star when one is NOT present', function () {
       expect(MatchHandler.findLowestStar(col1)).to.be.deep.equal(lowestStar1);
@@ -378,9 +376,9 @@ describe('Game', function () {
     });
   });
 
-  // ******************
+  // --------------------------------
   // INTEGRATION TESTS
-  // ******************
+  // --------------------------------
   describe('makeAllGemsFall(column)', function () {
     it('makes all gems fall when theres a falling gems present', function () {
       expect(MatchHandler.makeAllGemsFall(col3)).to.deep.equal(col3_afterAllGemsFall);
