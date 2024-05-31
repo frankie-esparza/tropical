@@ -1,3 +1,6 @@
+/*
+ * The following Screen class was written by App Academy - https://github.com/appacademy
+ */
 const keypress = require('keypress');
 const Command = require('./command');
 const { COLOR_CODES, DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, MESSAGE_GOODBYE } = require("../constants/constants.js");
@@ -75,7 +78,6 @@ class Screen {
         Screen.commands[key.name].execute();
       }
     });
-
     process.stdin.setRawMode(true);
     process.stdin.resume();
   }
@@ -84,16 +86,12 @@ class Screen {
     if (!Screen.initialized) return;
     const spacer = new Array(Screen.spacerCount).fill(' ').join('');
     console.clear();
-
     let borderLength = Screen.numCols * (Screen.spacerCount * 2 + 1) + 2;
     if (Screen.gridLines) borderLength += Screen.numCols - 1;
     let horizontalBorder = new Array(borderLength).fill(Screen.borderChar).join('');
-
     console.log(horizontalBorder);
-
     for (let row = 0; row < Screen.numRows; row++) {
       const rowCopy = [...Screen.grid[row]];
-
       for (let col = 0; col < Screen.numCols; col++) {
         let textColor = Screen.textColors[row][col] ? Screen.textColors[row][col] : "";
         let backgroundColor = Screen.backgroundColors[row][col] ? Screen.backgroundColors[row][col] : "";
@@ -102,7 +100,6 @@ class Screen {
         let vertLine = (Screen.gridLines && col > 0) ? '|' : '';
         rowCopy[col] = `${DEFAULT_BACKGROUND_COLOR}${vertLine}\x1b[0m${textColor}${backgroundColor}${spacer}${rowCopy[col]}${spacer}\x1b[0m`;
       }
-
       if (Screen.gridLines && row > 0) {
         let horizontalGridLine = new Array(rowCopy.length * 4 - 1).fill('-');
         horizontalGridLine.unshift(`${Screen.borderChar}${DEFAULT_BACKGROUND_COLOR}`);
@@ -113,7 +110,6 @@ class Screen {
       rowCopy.push(`${Screen.borderChar}`);
       console.log(rowCopy.join(''));
     }
-
     console.log(horizontalBorder);
     console.log("");
     console.log(Screen.message);
@@ -155,11 +151,9 @@ class Screen {
   static setBackgroundColor(row, col, color) {
     if (!Screen.initialized) return;
     let code = COLOR_CODES[color + 'Bg'];
-
     if (!code) {
       throw new Error("Invalid background color");
     }
-
     Screen.backgroundColors[row][col] = code;
   }
 
