@@ -1,8 +1,7 @@
 const Gem = require("./gem");
+const { MATCH_SYMBOL } = require("../constants/constants.js");
 
 class MatchHandler{
-  static MATCH_SYMBOL = '⭐️';
-
   static clearMatches(grid) {
     let columns = MatchHandler.getColumnsFromGrid(grid);
 
@@ -28,7 +27,7 @@ class MatchHandler{
       let top = 0;
       let bottom = column.length - 1;
       for (let i = bottom; i >= top; i--) {
-        if (column[i].type === MatchHandler.MATCH_SYMBOL && i !== top) return column[i];
+        if (column[i].type === MATCH_SYMBOL && i !== top) return column[i];
       }
       return null;
   }
@@ -38,7 +37,7 @@ class MatchHandler{
       let top = 0
       let bottom = star.row - 1;
       for (let i = bottom; i >= top; i--) {
-        if (column[i].type !== MatchHandler.MATCH_SYMBOL) return column[i];
+        if (column[i].type !== MATCH_SYMBOL) return column[i];
       }
       return null;
   }
@@ -60,7 +59,7 @@ class MatchHandler{
 
   static makeOneGemFall(column, star, gem) {
     column[star.row].type = gem.type;
-    column[gem.row].type = MatchHandler.MATCH_SYMBOL;
+    column[gem.row].type = MATCH_SYMBOL;
     return column;
 }
 
@@ -70,7 +69,7 @@ class MatchHandler{
 static addRandomGemsAtTop(column) {
   for (let row = 0; row < column.length - 1; row++) {
     let el = column[row];
-    if (el.type === MatchHandler.MATCH_SYMBOL) el.type = Gem.getRandomGemType();
+    if (el.type === MATCH_SYMBOL) el.type = Gem.getRandomGemType();
     else break;
     }
     return column;

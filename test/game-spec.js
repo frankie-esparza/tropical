@@ -4,9 +4,10 @@ const spies = require('chai-spies');
 const Game = require("../classes/game.js");
 const Gem = require("../classes/gem.js");
 const MatchHandler = require("../classes/matchHandler")
+const { GEM_TYPES } = require("../constants/constants.js");
+
 
 chai.use(spies);
-
 
 describe('Game', function () {
   let bj;
@@ -113,12 +114,12 @@ describe('Game', function () {
   describe('getRandomGemType()', function () {
     it('returns a random gem', function () {
       let randomGem = Gem.getRandomGemType();
-      expect(randomGem === Gem.GEM_TYPES[0] || randomGem === Gem.GEM_TYPES[1] || randomGem === Gem.GEM_TYPES[2] || randomGem === Gem.GEM_TYPES[3]).to.be.true;
+      expect(randomGem === GEM_TYPES[0] || randomGem === GEM_TYPES[1] || randomGem === GEM_TYPES[2] || randomGem === GEM_TYPES[3]).to.be.true;
     });
   });
 
   describe('swapGems()', function () {
-    it('swaps the Gem.GEM_TYPES of the 2 gems specified, if swap results in match', function () {
+    it('swaps the GEM_TYPES of the 2 gems specified, if swap results in match', function () {
       bj.selectedGems = [gem1, gem2];
       bj.swapGems();
 
