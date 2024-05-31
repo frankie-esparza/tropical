@@ -15,15 +15,6 @@ class MatchHandler{
     let newGrid = MatchHandler.getGridFromColumns(columns);
     return newGrid;
   }
-
-  static addRandomGemsAtTop(column) {
-    for (let row = 0; row < column.length - 1; row++) {
-      let el = column[row];
-      if (el.type === MatchHandler.MATCH_SYMBOL) el.type = Gem.getRandomGemType();
-      else break;
-      }
-      return column;
-  }
   
   // ------------------------------------------------------------------------------
   // FIND LOWEST STARS
@@ -70,6 +61,18 @@ class MatchHandler{
   static makeOneGemFall(column, star, gem) {
     column[star.row].type = gem.type;
     column[gem.row].type = MatchHandler.MATCH_SYMBOL;
+    return column;
+}
+
+// -----------------
+// REFILL GEMS
+// -----------------
+static addRandomGemsAtTop(column) {
+  for (let row = 0; row < column.length - 1; row++) {
+    let el = column[row];
+    if (el.type === MatchHandler.MATCH_SYMBOL) el.type = Gem.getRandomGemType();
+    else break;
+    }
     return column;
 }
 

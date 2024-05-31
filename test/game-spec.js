@@ -386,7 +386,7 @@ describe('Game', function () {
     });
   });
 
-  describe('starMatches()', function () {
+  describe('findAndStarMatches()', function () {
     let bj;
     let grid_beforeStar;
     let grid_afterStar;
@@ -411,7 +411,7 @@ describe('Game', function () {
 
     it('should star all matches', function () {
       bj.grid = grid_beforeStar;
-      bj.starMatches();
+      bj.findAndStarMatches();
       expect(bj.grid).to.deep.equal(grid_afterStar);
     });
   });
