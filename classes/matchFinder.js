@@ -5,7 +5,7 @@ class MatchFinder {
    * FIND MATCHES
    * -------------------------------- */
   /**
-   * Finds all Matches in Grid
+   * findMatches
    * @param {array} grid - 2D array of all the {@link Gem} instances currently on the board 
    * @returns {array} matches - flattened array of all matches 
    */
@@ -16,7 +16,7 @@ class MatchFinder {
   }
 
   /** 
-   * Finds all Matches in Row or Column
+   * findMatchesInRowOrCol
    * @param {array} rowOrCol - a row or column of {@link Gem} instances,
    * for example: [ {row: 0, col: 0, type: '🍉' }, {row: 0, col: 1, type: '🥥' }, etc... ]
    * @returns {array} - an array of matches, each match is an array of {@link Gem} instances

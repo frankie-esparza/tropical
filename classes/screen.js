@@ -28,7 +28,7 @@ class Screen {
 
 
   /* --------------------------------
-   * MAIN
+   * INITIALIZE
    * -------------------------------- */
   static initialize(numRows, numCols) {
     Screen.numRows = numRows;

@@ -1,8 +1,8 @@
-const Screen = require("./screen");
 const Cursor = require("./cursor");
 const Gem = require("./gem");
 const MatchFinder = require("./matchFinder");
 const MatchHandler = require("./matchHandler");
+const Screen = require("./screen");
 
 const {
   DELAY_DEFAULT, DELAY_AFTER_STARS_APPEAR,
@@ -10,6 +10,12 @@ const {
   MESSAGE_MATCH_FOUND, MESSAGE_INVALID_SWAP, MESSAGE_WELCOME
 } = require("../constants/constants.js");
 
+/**
+ * Game class
+ * @property {array} grid - 2D array of {@link Gem} instances that are currently on the board 
+ * @property {array} selectedGems - array of {@link Gem} instances that have been selected by the user to be swapped
+ * @property {array} matches - 2D array of matches, a match is an array of {@link Gem} instances 
+ */
 class Game {
   static BOARD_SIZE = 8; // this is a static var not constant so it can be lowered to write tests more easily
 
@@ -35,7 +41,7 @@ class Game {
     this.matches = MatchFinder.findMatches(this.grid);
     while (this.matches.length > 0) {
       this.findAndStarMatches(this.grid);
-      this.grid = MatchHandler.clearMatches(this.grid);
+      this.grid = MatchHandler.handleMatches(this.grid);
       this.matches = MatchFinder.findMatches(this.grid);
     }
     Screen.updateScreen(this.grid);
