@@ -60,8 +60,9 @@ class Game {
     }
     // if user selected enough gems to check for match, swap gems & check for match
     if (this.selectedGems.length === MIN_MATCH_LENGTH - 1) {
+      let selectedGems = this.selectedGems;
       this.swapGems();
-      this.handleMatchAttempt();
+      this.handleMatchAttempt(selectedGems);
     }
   }
 
@@ -74,16 +75,16 @@ class Game {
     this.selectedGems = [];
   }
 
-  handleMatchAttempt() {
+  handleMatchAttempt(selectedGems) {
     // If there's a match, tell user & star the matched gems
     if (MatchFinder.findMatches(this.grid).length > 0) {
-      Screen.setMessage(MESSAGE_MATCH_FOUND);
+      console.log(MESSAGE_MATCH_FOUND);
       setTimeout(this.findAndStarMatches.bind(this), DELAY_AFTER_STARS_APPEAR);
       setTimeout(this.playGame.bind(this), DELAY_DEFAULT);
 
       // If there's no match, tell user & swap gems back
     } else {
-      Screen.setMessage(MESSAGE_INVALID_SWAP);
+      console.log(MESSAGE_INVALID_SWAP);
       this.selectedGems = selectedGems;
       setTimeout(this.swapGems.bind(this), DELAY_DEFAULT);
     }
