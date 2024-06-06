@@ -1,3 +1,4 @@
+const { createHash } = require('crypto');
 const { GEM_TYPES } = require("../constants/constants.js");
 
 /** 
@@ -13,11 +14,18 @@ class Gem {
     this.type = type;
   }
 
+  static #lastRandomSeed = process.env.TROPICAL_RANDOM_SEED ?? Math.random().toString();
+
   static getRandomGemType() {
-    let min = 0;
-    let max = GEM_TYPES.length - 1;
-    let randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
+    let seed = BigInt(`0x${this.#getNextRandomSeed()}`)
+    let randomIndex = seed % BigInt(GEM_TYPES.length);
     return GEM_TYPES[randomIndex];
+  }
+
+  static #getNextRandomSeed() {
+    let seed = createHash('sha256').update(this.#lastRandomSeed).digest('hex');
+    this.#lastRandomSeed = seed;
+    return seed;
   }
 }
 
