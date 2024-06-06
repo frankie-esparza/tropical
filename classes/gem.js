@@ -17,10 +17,8 @@ class Gem {
   static #lastRandomSeed = process.env.TROPICAL_RANDOM_SEED ?? Math.random().toString();
 
   static getRandomGemType() {
-    let min = 0n;
-    let max = BigInt(GEM_TYPES.length) - 1n;
     let seed = BigInt(`0x${this.#getNextRandomSeed()}`)
-    let randomIndex = seed % (max - min) + min;
+    let randomIndex = seed % BigInt(GEM_TYPES.length);
     return GEM_TYPES[randomIndex];
   }
 
